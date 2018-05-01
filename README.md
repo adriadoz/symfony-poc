@@ -37,7 +37,42 @@ Para utilizar rutas por comentarios, se instalo la receta annotations desde comp
 
 ## Sesión 2
 ### Diferentes Entornos
-Se ha creado un nuevo entorno de trabajo _prod_ en la carpeta `config/packages/` el cual es configurarle desde la parametrización global en **.env**
+- Se ha creado un nuevo entorno de trabajo _prod_ en la carpeta `config/packages/` el cual es configurarle desde la parametrización global en **.env**
 
-Se imprime por pantalla, al usuario el mensaje **Hola `dev|prod` World** dependiendo del entorno en que se encuentre.
+- Se imprime por pantalla, al usuario el mensaje **Hola `dev|prod` World** dependiendo del entorno en que se encuentre.
+Para el correcto funcionamiento de esto, se instala la dependencia "symfony/dotenv" de flex.
 
+- se pasan los entornos por parametros customizando los resultados.
+
+llamar a http://localhost:8000 para mostrar en nombre custom del environment o http://localhost:8000 para el environment de .env
+
+- Se instala una receta de symfony flex - symfony/var-dumper
+
+### Entornos personalizados
+Con los entornos _prod_ y _dev_ ya configurados, se agregan en sus respectivas carpetas `config/packages/dev` y `config/packages/prod` un archivo llamado `parameters.yaml` encargado de gestionar los parámetros de nombre para cada entorno `ganianes_dev`y `not_fail` los cuales, luego son enviados al controlador por la inyección de servicios desde `config/services.yaml` argumentando los parámetros del constructor de la siguiente manera.
+
+	App\Controller\MainController:
+	        arguments: ['%kernel.environment%', '%environment.name%']
+
+Donde, el primer argumento, captura el entorno actual del usuario y el segundo, el nombre personalizado de ese entorno. Para acceder al nombre personalizado, se puede hacer a travez del método `showHelloCustom` en el controlador `MainController` desde la ruta [http://localhost:8000/custom][4]
+
+## Sesión 3
+### Gestionar Log de los entornos.
+Utilizando la receta **MonoLog**, se configuran la gestión de logs y se configuran los entornos desde monolog.yaml en sus respectivas carpetas.
+
+### Mensaje de warning, al acceder a Hello World
+En symfony 4, al tener configurado nuestros servicios como `autowire: true` podemos inyectar dependencias automáticamente, por lo cual se agrega la dependencia al constructor de nuestro controlador, para gestionar los log (`LoggerInterface $logger`).
+
+Luego se crea un evento de warning al ejecutar el método principal de saludo.
+
+	$this->logger->info('InfoLogger');
+	$this->logger->warning('WarningLogger');
+
+### Error en un get incompleto y errores solo en prod.
+Se gestiona mostrar un error en caso de que exista un parametro get `?bum`  en la url, el cual no contengo información.
+
+	if ($request->query->has('bum')) {
+	    $this->logger->error('ErrorLogger');
+	}
+
+Luego se crea un filtro en `config/packages/prov/monolog.yaml` para guardar los los, solo cuando se produzca un error.
