@@ -12,7 +12,7 @@ final class MainController extends Controller
     public function index()
     {
         return new Response(
-            '<html><body>Hello World</body></html>'
+            '<html><body>Hello '. $_SERVER['APP_ENV'] . ' World</body></html>'
         );
     }
 }
