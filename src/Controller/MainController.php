@@ -24,12 +24,7 @@ final class MainController extends Controller
 
     public function showHelloEnv(Request $request)
     {
-        $this->logger->info('Info to the log on each request to Hello Word');
-        $this->logger->warning('Waring to the log on each request to Hello Word');
-
-        if ($request->query->has('bum')) {
-            $this->logger->error('Error, send GET key bum');
-        }
+        $this->setLogRecords($request);
 
         return new Response(
             '<html><body>Hello ' . $this->environment . ' World</body></html>'
@@ -38,15 +33,20 @@ final class MainController extends Controller
 
     public function showHelloEnvName(Request $request)
     {
+        $this->setLogRecords($request);
+
+        return new Response(
+            '<html><body>Hello ' . $this->environmentName . ' World</body></html>'
+        );
+    }
+
+    private function setLogRecords(Request $request): void
+    {
         $this->logger->info('Info to the log on each request to Hello Word');
         $this->logger->warning('Waring to the log on each request to Hello Word');
 
         if ($request->query->has('bum')) {
             $this->logger->error('Error, send GET key bum');
         }
-
-        return new Response(
-            '<html><body>Hello ' . $this->environmentName . ' World</body></html>'
-        );
     }
 }
