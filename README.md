@@ -6,7 +6,7 @@ El equipo consta de 3 integrantes:
 - Alex
 
 ## Sesión 1
-### Requerimiento: Instalación de Symfony 4.0.4
+### Requerimiento: Instalación de Symfony 4.0.9
 Para instalar symfony, se requiere composer instalado o en su defecto un compilado de [composer.phar][1], como grupo optamos con ejecutar un binario compilado, v1.6.3 y así tener cada uno en su maquina la misma versión de composer.
 
 Para realizar la instalación de Symfony, se nos presentaron dos alternativas.
@@ -34,3 +34,10 @@ Ambas cubren nuestra necesidad, pero luego de un consenso, llegamos a la conclus
 Para utilizar rutas por comentarios, se instalo la receta annotations desde composer.
 
 `php composer.phar require annotations`
+
+## Sesión 2
+### Diferentes Entornos
+Se ha creado un nuevo entorno de trabajo _prod_ en la carpeta `config/packages/` el cual es configurarle desde la parametrización global en **.env**
+
+Se imprime por pantalla, al usuario el mensaje **Hola `dev|prod` World** dependiendo del entorno en que se encuentre.
+
