@@ -9,10 +9,26 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class MainController extends Controller
 {
-    public function index()
+    private $environment;
+    private $environmentName;
+
+    public function __construct(string $environment, string $environmentName)
+    {
+        $this->environment     = $environment;
+        $this->environmentName = $environmentName;
+    }
+
+    public function showHelloEnv()
     {
         return new Response(
-            '<html><body>Hello '. $_SERVER['APP_ENV'] . ' World</body></html>'
+            '<html><body>Hello ' . $this->environment . ' World</body></html>'
+        );
+    }
+
+    public function showHelloEnvName()
+    {
+        return new Response(
+            '<html><body>Hello ' . $this->environmentName . ' World</body></html>'
         );
     }
 }

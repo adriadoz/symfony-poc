@@ -1,3 +1,7 @@
 index:
     path: /
-    controller: G3\FrameworkPractice\Controller\MainController::index
+    controller: G3\FrameworkPractice\Controller\MainController::showHelloEnvName
+
+env_name:
+    path: /env
+    controller: G3\FrameworkPractice\Controller\MainController::showHelloEnv
