@@ -21,12 +21,12 @@
     },
     "autoload": {
         "psr-4": {
-            "App\\": "src/"
+            "G3\\FrameworkPractice\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "App\\Tests\\": "tests/"
+            "G3\\FrameworkPractice\\Tests\\": "tests/"
         }
     },
     "replace": {
