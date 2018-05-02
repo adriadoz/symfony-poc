@@ -42,11 +42,11 @@ final class MainController extends Controller
 
     private function setLogRecords(Request $request): void
     {
-        $this->logger->info('Info to the log on each request to Hello Word');
-        $this->logger->warning('Warning to the log on each request to Hello Word');
+        $this->logger->info('Info to the log on each request to Hello Word', ["Info" => "Context Param"]);
+        $this->logger->warning('Warning to the log on each request to Hello Word', ["Warning" => "Context Param"]);
 
         if ($request->query->has('bum')) {
-            $this->logger->error('Error, send GET key bum');
+            $this->logger->error('Error, send GET key bum', ["Error" => "Context Param"]);
         }
     }
 }
