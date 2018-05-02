@@ -9,7 +9,7 @@ monolog:
             process_psr_3_messages: false
             channels: ["!event", "!doctrine"]
         file_json:
-            type: stream
+            type: rotating_file
             formatter: json_log
             path: "%kernel.logs_dir%/%kernel.environment%/%kernel.environment%.json"
             level: debug

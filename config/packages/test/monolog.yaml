@@ -1,7 +1,9 @@
 monolog:
     handlers:
         main:
-            type: stream
+            type: rotating_file
+            formatter: json_log
             path: "%kernel.logs_dir%/test/%kernel.environment%.json"
             level: debug
+            max_files: 15
             channels: ["!event"]
