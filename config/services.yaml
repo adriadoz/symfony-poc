@@ -28,3 +28,6 @@ services:
 
     G3\FrameworkPractice\Controller\MainController:
         arguments: ['%kernel.environment%', '%environment.name%']
+
+    json_log:
+            class: Monolog\Formatter\JsonFormatter

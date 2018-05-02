@@ -1,16 +1,18 @@
 monolog:
     handlers:
-        main:
+        filter_error:
             type: fingers_crossed
             action_level: error
-            handler: file_log
-        file_log:
-            type: stream
-            path: "%kernel.logs_dir%/%kernel.environment%/%kernel.environment%.log"
-            level: error
-            excluded_404s:
-                - ^/
+            handler: file_json
         console:
-            type:   console
+            type: console
             process_psr_3_messages: false
             channels: ["!event", "!doctrine"]
+        file_json:
+            type: stream
+            formatter: json_log
+            path: "%kernel.logs_dir%/%kernel.environment%/%kernel.environment%.json"
+            level: debug
+            max_files: 15
+            excluded_404s:
+              - ^/
