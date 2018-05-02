@@ -1,6 +1,6 @@
 <?php
 
-namespace G3\FrameworkPractice;
+namespace G3\FrameworkPractice\Infrastructure;
 
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\Config\Loader\LoaderInterface;

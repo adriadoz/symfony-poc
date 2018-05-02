@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-namespace G3\FrameworkPractice\Controller;
+namespace G3\FrameworkPractice\Infrastructure\Controller;
 
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
