@@ -24,8 +24,7 @@ final class LogSummary extends Command
     {
         $this
             ->setName('log:summary')
-            ->setDescription('Read and print log file')
-            ->setHelp('Print log file');
+            ->setDescription('Read and print last 15 day log file');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): void
@@ -37,27 +36,21 @@ final class LogSummary extends Command
     private function getFile(): string
     {
         $finder = new Finder();
-        $finder->files()->name($this->logNameFile())->in('var/log/' . $this->environment);
+        $finder->files()->in('var/log/' . $this->environment);
 
-        $contents = '';
+        $contents = [];
 
         foreach ($finder as $file) {
-            $contents = $file->getContents();
+            if (!empty($file->getContents())) {
+                array_push($contents, $file->getContents());
+            }
         }
 
-        return $contents;
+        return json_encode($contents);
     }
 
     private function print(OutputInterface $output, string $textToPrint): void
     {
         $output->writeln([$textToPrint]);
-    }
-
-    private function logNameFile(): string
-    {
-        $hoy  = date("Y-m-d");
-        $name = $this->environment . '-' . $hoy . '.' . self::TYPE_LOG . '';
-
-        return $name;
     }
 }
