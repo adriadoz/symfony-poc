@@ -6,4 +6,12 @@ namespace G3\FrameworkPractice\Application\Log;
 
 final class LogSummary
 {
+    public function __construct()
+    {
+    }
+
+    public function __invoke()
+    {
+        
+    }
 }

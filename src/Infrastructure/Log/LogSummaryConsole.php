@@ -7,12 +7,11 @@ namespace G3\FrameworkPractice\Infrastructure\Log;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Finder\Finder;
 
 final class LogSummaryConsole extends Command
 {
+
     private $environment;
-    private const TYPE_LOG = 'json';
 
     public function __construct(string $environment)
     {
@@ -29,24 +28,8 @@ final class LogSummaryConsole extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): void
     {
-        $logsToShow = $this->getFile();
-        $this->print($output, $logsToShow);
-    }
-
-    private function getFile(): string
-    {
-        $finder = new Finder();
-        $finder->files()->in('var/log/' . $this->environment);
-
-        $contents = [];
-
-        foreach ($finder as $file) {
-            if (!empty($file->getContents())) {
-                array_push($contents, $file->getContents());
-            }
-        }
-
-        return json_encode($contents);
+        $logsToShow = new LogSummary($this->environment);
+        $this->print($output, $logsToShow->__invoke());
     }
 
     private function print(OutputInterface $output, string $textToPrint): void
