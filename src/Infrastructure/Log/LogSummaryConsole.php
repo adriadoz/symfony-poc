@@ -2,14 +2,14 @@
 
 declare(strict_types = 1);
 
-namespace G3\FrameworkPractice\Infrastructure\Console;
+namespace G3\FrameworkPractice\Infrastructure\Log;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Finder\Finder;
 
-final class LogSummary extends Command
+final class LogSummaryConsole extends Command
 {
     private $environment;
     private const TYPE_LOG = 'json';

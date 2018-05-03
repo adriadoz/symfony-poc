@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-namespace G3\FrameworkPractice\Application;
+namespace G3\FrameworkPractice\Application\MessageCommand;
 
 final class SayHello
 {
