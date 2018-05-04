@@ -29,8 +29,5 @@ services:
     G3\FrameworkPractice\Infrastructure\Controller\MainController:
         arguments: ['%kernel.environment%', '%environment.name%']
 
-    G3\FrameworkPractice\Infrastructure\Log\LogSummaryConsole:
-        arguments: ['%kernel.environment%']
-
     json_log:
         class: Monolog\Formatter\JsonFormatter
