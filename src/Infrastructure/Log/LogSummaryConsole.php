@@ -30,8 +30,8 @@ final class LogSummaryConsole extends Command
         $environment = $this->getEnvironment($input, $output);
         $levels      = $this->getLevels($input, $output);
 
-        $logGetters  = new LogSummaryGetter($environment);
-        $logSummary  = $logGetters->__invoke();
+        $logGetters = new LogSummaryGetter($environment);
+        $logSummary = $logGetters->__invoke();
 
         $this->print($logSummary->__invoke($levels), $output);
     }
@@ -57,6 +57,7 @@ final class LogSummaryConsole extends Command
             $enteredLevels = $helper->ask($input, $output, $question);
         }
         $enteredLevelNotSpaces = str_replace(' ', '', $enteredLevels);
+
         return $enteredLevelNotSpaces;
     }
 

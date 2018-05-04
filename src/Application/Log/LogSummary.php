@@ -25,7 +25,7 @@ final class LogSummary
         $summary = [];
         foreach ($this->content->items() as $item) {
             $level = $item->levelName();
-            if(in_array($level, $levels)) {
+            if (in_array($level, $levels)) {
                 if (array_key_exists($level, $summary)) {
                     $summary[$level] = $summary[$level] + 1;
                 } else {
@@ -34,7 +34,7 @@ final class LogSummary
             }
         }
 
-        if(empty($summary)) {
+        if (empty($summary)) {
             return ['No log was found for the selected levels'];
         }
 
@@ -45,6 +45,7 @@ final class LogSummary
     {
         $lowCaseLevels = strtoupper($levels);
         $levels        = explode(",", $lowCaseLevels);
+
         return $levels;
     }
 }
