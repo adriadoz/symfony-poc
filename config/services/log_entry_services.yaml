@@ -4,9 +4,15 @@ services:
       autoconfigure: false
       public: false
 
+    G3\FrameworkPractice\Application\MessageCommand\SayHello:
+
     G3\FrameworkPractice\Infrastructure\MessageCommand\HelloConsole:
+        arguments:
+            $sayMessage: '@G3\FrameworkPractice\Application\MessageCommand\SayHello'
         tags:
             - { name: 'console.command', command: 'message:hello' }
+
+    G3\FrameworkPractice\Application\Log\LogSummary:
 
     G3\FrameworkPractice\Infrastructure\Log\LogSummaryConsole:
         tags:

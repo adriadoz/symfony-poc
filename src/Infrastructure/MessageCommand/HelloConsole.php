@@ -11,6 +11,14 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 final class HelloConsole extends Command
 {
+    private $sayMessage;
+
+    public function __construct(SayHello $sayMessage)
+    {
+        parent::__construct();
+        $this->sayMessage = $sayMessage;
+    }
+
     protected function configure(): void
     {
         $this
@@ -21,7 +29,6 @@ final class HelloConsole extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): void
     {
-        $sayMessage = new SayHello();
-        $output->writeln($sayMessage->__invoke());
+        $output->writeln($this->sayMessage->__invoke());
     }
 }
