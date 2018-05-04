@@ -76,3 +76,10 @@ Se gestiona mostrar un error en caso de que exista un parametro get `?bum`  en l
 	}
 
 Luego se crea un filtro en `config/packages/prov/monolog.yaml` para guardar los los, solo cuando se produzca un error.
+
+
+#Capítulo 5 reto 2/3
+
+Cuando se desactiva `autoconfigure: false`, nos vemos obligados a configurar el servicio por medio de etiquetas, por ejemplo en el caso de comando, debemos indicar que es un comando de consola y que comando lo ejecuta.
+
+Cuando se desactiva `autowire: false`, las inyección de constructores, deben ser especificadas por argumentos en el servicio.
