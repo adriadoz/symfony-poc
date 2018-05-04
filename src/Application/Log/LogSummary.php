@@ -15,21 +15,23 @@ final class LogSummary
         $this->content = $content;
     }
 
-    public function __invoke(): string
+    public function __invoke(): array
     {
-        return $this->logToJson();
+        return $this->logByLevels();
     }
 
-    private function logToJson(): string
+    private function logByLevels(): array
     {
-        $logs = [];
+        $summary = [];
         foreach ($this->content->items() as $item) {
-            $log['message']   = $item->message();
-            $log['channel']   = $item->channel();
-            $log['levelName'] = $item->levelName();
-            array_push($logs, $log);
+            $level = $item->levelName();
+            if (array_key_exists($level, $summary)) {
+                $summary[$level] = $summary[$level] + 1;
+            } else {
+                $summary[$level] = 1;
+            }
         }
 
-        return json_encode($logs);
+        return $summary;
     }
 }

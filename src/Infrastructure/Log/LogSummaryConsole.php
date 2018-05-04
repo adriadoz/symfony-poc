@@ -22,18 +22,22 @@ final class LogSummaryConsole extends Command
     {
         $this
             ->setName('log:summary')
-            ->setDescription('Print last 15 day log file');
+            ->setDescription('Print summary of last 15 day log');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): void
     {
         $logGetters = new LogSummaryGetter($this->environment);
         $logSummary = $logGetters->__invoke();
-        $this->print($output, $logSummary->__invoke());
+
+        $this->print($logSummary->__invoke(), $output);
     }
 
-    private function print(OutputInterface $output, string $textToPrint): void
+    private function print(array $summaryLog, OutputInterface $output): void
     {
-        $output->writeln([$textToPrint]);
+        foreach ($summaryLog as $key => $value) {
+            $output->writeln($key . ": " . $value);
+        }
+
     }
 }
