@@ -1,14 +1,12 @@
 services:
     _defaults:
-      autowire: false
+      autowire: true
       autoconfigure: true
       public: false
 
     G3\FrameworkPractice\Application\MessageCommand\SayHello:
 
     G3\FrameworkPractice\Infrastructure\MessageCommand\HelloConsole:
-        arguments:
-            $sayMessage: '@G3\FrameworkPractice\Application\MessageCommand\SayHello'
 
     G3\FrameworkPractice\Application\Log\LogSummary:
 
