@@ -21,16 +21,19 @@ final class LogSummaryConsole extends Command
                 'environment',
                 InputArgument::OPTIONAL,
                 '[string] Enter a environment to show. Example: "dev"'
-            );
+            )
+            ->addArgument('levels', InputArgument::OPTIONAL, '[string] Enter levels to show. Example: "warning,error"');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): void
     {
         $environment = $this->getEnvironment($input, $output);
+        $levels      = $this->getLevels($input, $output);
+
         $logGetters  = new LogSummaryGetter($environment);
         $logSummary  = $logGetters->__invoke();
 
-        $this->print($logSummary->__invoke(), $output);
+        $this->print($logSummary->__invoke($levels), $output);
     }
 
     private function getEnvironment(InputInterface $input, OutputInterface $output): string
@@ -43,6 +46,18 @@ final class LogSummaryConsole extends Command
         }
 
         return $enteredEnvironment;
+    }
+
+    private function getLevels(InputInterface $input, OutputInterface $output): string
+    {
+        $helper        = $this->getHelper('question');
+        $enteredLevels = $input->getArgument('levels');
+        if (empty($enteredLevels)) {
+            $question      = new Question('Please enter levels to show separated by comma: ', 'dev,info,warning,error');
+            $enteredLevels = $helper->ask($input, $output, $question);
+        }
+        $enteredLevelNotSpaces = str_replace(' ', '', $enteredLevels);
+        return $enteredLevelNotSpaces;
     }
 
     private function print(array $summaryLog, OutputInterface $output): void
