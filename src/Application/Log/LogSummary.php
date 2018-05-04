@@ -17,8 +17,19 @@ final class LogSummary
 
     public function __invoke(): string
     {
-        dump($this->content);
+        return $this->logToJson();
+    }
 
-        return '';
+    private function logToJson(): string
+    {
+        $logs = [];
+        foreach ($this->content->items() as $item) {
+            $log['message']   = $item->message();
+            $log['channel']   = $item->channel();
+            $log['levelName'] = $item->levelName();
+            array_push($logs, $log);
+        }
+
+        return json_encode($logs);
     }
 }

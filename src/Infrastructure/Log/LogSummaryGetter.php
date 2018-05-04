@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace G3\FrameworkPractice\Infrastructure\Log;
 
+use G3\FrameworkPractice\Application\Log\LogSummary;
 use G3\FrameworkPractice\Domain\Log\LogEntry;
 use G3\FrameworkPractice\Domain\Log\LogEntryCollection;
 use Symfony\Component\Finder\Finder;
@@ -21,12 +22,15 @@ final class LogSummaryGetter
         $this->environment = $environment;
     }
 
-    public function __invoke(): LogEntryCollection
+    public function __invoke(): LogSummary
     {
         $finder = new Finder();
         $finder->files()->in('var/log/' . $this->environment);
 
-        return $this->getLastFiles($finder);
+        $logCollection = $this->getLastFiles($finder);
+        $logSummary    = new LogSummary($logCollection);
+
+        return $logSummary;
     }
 
     private function getLastFiles(Finder $finder): LogEntryCollection
@@ -38,6 +42,7 @@ final class LogSummaryGetter
                 $this->serializer($contentFile, $logCollection);
             }
         }
+
         return $logCollection;
     }
 
