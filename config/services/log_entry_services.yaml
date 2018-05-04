@@ -1,9 +1,13 @@
 services:
     _defaults:
-      autowire: true
-      autoconfigure: true
+      autowire: false
+      autoconfigure: false
       public: false
 
     G3\FrameworkPractice\Infrastructure\MessageCommand\HelloConsole:
+        tags:
+            - { name: 'console.command', command: 'message:hello' }
 
     G3\FrameworkPractice\Infrastructure\Log\LogSummaryConsole:
+        tags:
+            - { name: 'console.command', command: 'log:summary' }
