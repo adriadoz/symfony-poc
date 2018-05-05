@@ -22,3 +22,4 @@ services:
     G3\FrameworkPractice\Infrastructure\UseCase\UseCaseSearcher:
 
     G3\FrameworkPractice\Infrastructure\Endpoint\LogApiController:
+        tags: ['controller.service_arguments']
