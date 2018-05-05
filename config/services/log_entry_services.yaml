@@ -10,6 +10,9 @@ services:
     G3\FrameworkPractice\Application\Log\LogSummary:
         tags: [g3.use_case]
 
+    G3\FrameworkPractice\Application\Endpoint\LogApiBuilder:
+        tags: [g3.use_case]
+
     G3\FrameworkPractice\Infrastructure\Log\LogSummaryConsole:
 
     G3\FrameworkPractice\Infrastructure\MessageCommand\HelloConsole:
@@ -17,3 +20,5 @@ services:
     G3\FrameworkPractice\Infrastructure\UseCase\UseCaseSearcherConsole:
 
     G3\FrameworkPractice\Infrastructure\UseCase\UseCaseSearcher:
+
+    G3\FrameworkPractice\Infrastructure\Endpoint\LogApiController:
