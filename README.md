@@ -77,9 +77,87 @@ Se gestiona mostrar un error en caso de que exista un parametro get `?bum`  en l
 
 Luego se crea un filtro en `config/packages/prov/monolog.yaml` para guardar los los, solo cuando se produzca un error.
 
+### Almacenar log en Json
+En monolog.yaml, se crea un nuevo fichero con extensión .json y se le indica que le de formato con la siguiente instrucción `formatter: json_log`
+
+### Rotar los log y almacenar los últimos 15 días
+Se cambia el tipo de archivo generado, de `stream` a `rotating_file` y se le indica un máximo de archivos generados `max_files: 15`a 15 (equivalente a 15 días.
+
+### Escribir contenida extra en errores.
+Se puede enviar un array con datos adicionales, como por ejemplo el id del usuario que genero el error, para ellos los log reciben dos parámetros. `texto, array` 
+
+## Sesión 4 - Console
+La consola, permite ejecutar sentencias o comandos personalizados. Los comandos de la consola se pueden usar para cualquier tarea recurrente, como cronjobs, importaciones u otros trabajos por lotes.
+
+Para la instalación se usa la receta `php composer.phar require symfony/console`
+
+### Estructura de directorio
+Antes de proseguir con la sesión 4, se reorganizaron los directorios, para alcanzar la arquitectura hexagonal y se personalizo el namespace correspondiendo al nombre del equipo.
+
+### Console
+La consola, es una clase que extiende de Command y pese a no exigir, requiere dos métodos básicos para el funcionamiento
+
+`protected function configure()` principalmente se configura los datos del comando de linea.
+
+Para el Hello World, se utilizan la siguiente configuración
+
+	    $this
+	        ->setName('message:hello')
+	        ->setDescription('Hello World')
+	        ->setHelp('say Hello World. . .');
+
+Y `protected function execute(InputInterface $input, OutputInterface $output)` 
+
+la encargada de ejecutar las instrucciones solicitadas, recibe dos parámetros. `InputInterface` y `OutputInterface`
+
+### Leer un archivo JSON como una entrada de dominio e imprimir las instancias como objetos.
+
+Se instala la receta de symfony `symfony/serializer`
+
+Con ayuda de finder, se lee el directorio de log completo, en este caso recurrimos a llamar solo al día.
+
+Problemas, cada linea es un json, por lo cual hay que leer el fichero linea por linea, decodificarlo y luego codificarlo nuevamente antes de serializarlo.
+
+Serialize, permite codificar en una clase la información de un json.
+
+### Seleccionar el entorno a imprimir por pantalla especificándolo como argumento
+
+Se añade la configuración siguiente `->addArgument('environment', InputArgument::REQUIRED, 'Enter a environment to show')` para forzar al usuario a especificar mediante un argumento el entorno del que desea ver los errores.
+
+A la funcion `getTodayLog` se le pasa por parametro el entorno seleccionado. Se comprueba si es `prod` o `dev`.
+
+### Filtrar los niveles de errores a imprimir por pantalla especifincándolos como argumento
+
+Se añade una configuración a la método `configure` de la clase `LogReadCommand` para recojer la cadena que contiene los niveles a filtrar.
+
+La cadena introducida será tratada en la función `getEnteredLevels` que devolverá un array con los distintos niveles.
+
+En los métodos `print` y `printSummary` se verificarán que los errores a mostrar existen en el array de niveles introducido por comando.
+
+### Si el nivel o entorno no ha sido especificado se le preguntará al usuario
+
+Haciendo uso de `use Symfony\Component\Console\Question\Question` le preguntamos al usuario los datos que no ha introducido.
+
+	    `if(empty($enteredEnvironment)){
+	         $question = new Question('Please enter a environment to show: ', 'dev');
+	         $enteredEnvironment = $helper->ask($input, $output, $question);
+	     }`
+
+En el método `execute` comprobamos si el argumento está vacio, y en caso afirmativo preguntamos al usuario que especifique el entorno.
+
+Repetimos el mismo procedimiento para especificar los niveles de errores a filtrar.
 
 #Capítulo 5 reto 2/3
 
 Cuando se desactiva `autoconfigure: false`, nos vemos obligados a configurar el servicio por medio de etiquetas, por ejemplo en el caso de comando, debemos indicar que es un comando de consola y que comando lo ejecuta.
 
 Cuando se desactiva `autowire: false`, las inyección de constructores, deben ser especificadas por argumentos en el servicio.
+
+
+
+
+
+[1]:	https://getcomposer.org/download/1.6.3/composer.phar "Binario de composer v1.6.3 sha256: 52cb7bbbaee720471e3b34c8ae6db53a38f0b759c06078a80080db739e4dcab6"
+[2]:	https://bitbucket.org/mupwar/symfony_g3 "Repositorio Grupo 3"
+[3]:	https://github.com/MarioDevment/VagranDebianServer "Maquina Virtual - Vagrant y Ansible"
+[4]:	http://localhost:8000/custom "Ruta custom, para nombre de entorno personalizado"
