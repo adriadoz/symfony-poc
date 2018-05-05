@@ -1,0 +1,24 @@
+log_api:
+    path: /logs
+    controller: G3\FrameworkPractice\Infrastructure\Endpoint\LogApiController::__invoke
+    methods: [GET]
+
+log_api_post:
+    path: /logs
+    controller: G3\FrameworkPractice\Infrastructure\Endpoint\LogApiController::LogsOnMethodNotImplement
+    methods: [POST]
+
+log_api_patch:
+    path: /logs
+    controller: G3\FrameworkPractice\Infrastructure\Endpoint\LogApiController::LogsOnMethodNotImplement
+    methods: [PATCH]
+
+log_api_delete:
+    path: /logs
+    controller: G3\FrameworkPractice\Infrastructure\Endpoint\LogApiController::LogsOnMethodNotImplement
+    methods: [DELETE]
+
+log_api_put:
+    path: /logs
+    controller: G3\FrameworkPractice\Infrastructure\Endpoint\LogApiController::LogsOnMethodNotImplement
+    methods: [PUT]

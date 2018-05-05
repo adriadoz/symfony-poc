@@ -25,4 +25,17 @@ final class LogApiController
 
         return $response;
     }
+
+    public function LogsOnMethodNotImplement()
+    {
+        return $this->whenTheMethodHasNotBeenImplemented();
+    }
+
+    private function whenTheMethodHasNotBeenImplemented(): Response
+    {
+        $response = new Response();
+        $response->setStatusCode(405);
+
+        return $response;
+    }
 }
