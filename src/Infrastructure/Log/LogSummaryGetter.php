@@ -21,7 +21,7 @@ final class LogSummaryGetter
     public function __construct(string $path, string $environment)
     {
         $this->environment = $environment;
-        $this->path = $path;
+        $this->path        = $path;
     }
 
     public function __invoke(): LogSummary

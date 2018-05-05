@@ -2,12 +2,12 @@ log_api:
     path: /log-summaries/{environment}
     defaults:
         environment: dev
-    controller: G3\FrameworkPractice\Infrastructure\Endpoint\LogApiController::summaryLog
+    controller: G3\FrameworkPractice\Infrastructure\Endpoint\LogApiController::read
     methods: [GET]
 
 log_api_post:
     path: /log-summaries/
-    controller: G3\FrameworkPractice\Infrastructure\Endpoint\LogApiController::LogsOnMethodNotImplement
+    controller: G3\FrameworkPractice\Infrastructure\Endpoint\LogApiController::add
     methods: [POST]
 
 log_api_patch:

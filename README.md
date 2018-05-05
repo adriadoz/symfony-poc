@@ -1,9 +1,9 @@
 # Grupo 3 - Taller de Symfony
 
 El equipo consta de 3 integrantes:
-- Mario
-- Adrià
-- Alex
+ 
+ - Adrià
+ - Mario
 
 ## Sesión 1
 ### Requerimiento: Instalación de Symfony 4.0.9

@@ -13,13 +13,31 @@ final class LogApiController
 {
     private const PATH = '../var/log/';
 
-    public function summaryLog(string $environment, Request $request)
+    public function read(string $environment, Request $request): Response
     {
         $filters = $request->query->get('filter');
 
         $logSummary    = new LogSummaryGetter(self::PATH, $environment);
         $logApiBuilder = new LogApiBuilder($logSummary->__invoke());
 
+        $response = $this->setContent($filters, $logApiBuilder);
+        $response->headers->set('Content-Type', 'application/json; charset=UTF-8');
+
+        return $response;
+    }
+
+    public function add(): void
+    {
+        //TODO: Future implementation for add log external
+    }
+
+    public function LogsOnMethodNotImplement(): Response
+    {
+        return $this->whenTheMethodHasNotBeenImplemented();
+    }
+
+    private function setContent($filters, LogApiBuilder $logApiBuilder): Response
+    {
         $response = new Response();
         if (!isset($filters)) {
             $response->setContent($logApiBuilder->logSummary());
@@ -29,14 +47,7 @@ final class LogApiController
             $response->setContent($logApiBuilder->logSummaryFilter($filters));
         }
 
-        $response->headers->set('Content-Type', 'application/json; charset=UTF-8');
-
         return $response;
-    }
-
-    public function LogsOnMethodNotImplement()
-    {
-        return $this->whenTheMethodHasNotBeenImplemented();
     }
 
     private function whenTheMethodHasNotBeenImplemented(): Response

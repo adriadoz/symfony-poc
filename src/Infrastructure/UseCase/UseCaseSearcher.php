@@ -34,6 +34,12 @@ final class UseCaseSearcher
         return $foundServiceClass;
     }
 
+    public function callBackContainer(): Closure
+    {
+        /** @noinspection PhpUndefinedMethodInspection */
+        return $this->buildContainer();
+    }
+
     private function getContainerBuilder(Kernel $kernel): ContainerBuilder
     {
         $kernelContainer = $kernel->getContainer()->getParameter('debug.container.dump');
@@ -85,11 +91,5 @@ final class UseCaseSearcher
         );
 
         return $buildContainer;
-    }
-
-    public function callBackContainer(): Closure
-    {
-        /** @noinspection PhpUndefinedMethodInspection */
-        return $this->buildContainer();
     }
 }
