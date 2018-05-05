@@ -6,10 +6,12 @@ namespace G3\FrameworkPractice\Infrastructure\Endpoint;
 
 use G3\FrameworkPractice\Application\Endpoint\LogApiBuilder;
 use G3\FrameworkPractice\Infrastructure\Log\LogSummaryGetter;
+use Monolog\Logger;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
-final class LogApiController
+final class LogApiController extends Controller
 {
     private const PATH = '../var/log/';
 
@@ -26,9 +28,19 @@ final class LogApiController
         return $response;
     }
 
-    public function add(): void
+    public function add(Request $request): Response
     {
-        //TODO: Future implementation for add log external
+        $type    = strtoupper($request->query->get('type'));
+        $message = $request->query->get('message');
+
+        $logger = $this->getLogExternalChannel();
+
+        $this->saveLog($logger, $type , $message);
+
+        $response = new Response();
+        $response->setStatusCode(201);
+
+        return $response;
     }
 
     public function LogsOnMethodNotImplement(): Response
@@ -56,5 +68,32 @@ final class LogApiController
         $response->setStatusCode(405);
 
         return $response;
+    }
+
+    private function getLogExternalChannel()
+    {
+        $logger = $this->get('monolog.logger.external');
+
+        return $logger;
+    }
+
+    private function saveLog(Logger $logger, string $type, string $message): void
+    {
+        switch ($type) {
+            case 'DEBUG':
+                $logger->debug($message);
+                break;
+            case 'WARNING':
+                $logger->warning($message);
+                break;
+            case 'CRITICAL':
+                $logger->critical($message);
+                break;
+            case 'ERROR':
+                $logger->error($message);
+                break;
+            default:
+                $logger->info($message);
+        }
     }
 }
