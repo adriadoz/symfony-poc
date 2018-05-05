@@ -7,15 +7,16 @@ namespace G3\FrameworkPractice\Infrastructure\UserCase;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 final class UseCaseSearcherConsole extends Command
 {
-    private $useCase;
+    private $container;
 
-    public function __construct(array $useCase)
+    public function __construct(ContainerInterface $container)
     {
         parent::__construct();
-        $this->useCase = $useCase;
+        $this->container = $container;
     }
 
     protected function configure(): void
@@ -27,8 +28,7 @@ final class UseCaseSearcherConsole extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): void
     {
-        foreach ($this->useCase as $item) {
-            $output->writeln($item);
-        }
+        $usesCase = new UseCaseSearcher();
+        $usesCase->__invoke($this->container);
     }
 }
