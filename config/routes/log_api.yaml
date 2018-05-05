@@ -1,24 +1,26 @@
 log_api:
-    path: /logs
-    controller: G3\FrameworkPractice\Infrastructure\Endpoint\LogApiController::__invoke
+    path: /log-summaries/{environment}
+    defaults:
+        environment: dev
+    controller: G3\FrameworkPractice\Infrastructure\Endpoint\LogApiController::devSummaryLog
     methods: [GET]
 
 log_api_post:
-    path: /logs
+    path: /log-summaries/
     controller: G3\FrameworkPractice\Infrastructure\Endpoint\LogApiController::LogsOnMethodNotImplement
     methods: [POST]
 
 log_api_patch:
-    path: /logs
+    path: /log-summaries/
     controller: G3\FrameworkPractice\Infrastructure\Endpoint\LogApiController::LogsOnMethodNotImplement
     methods: [PATCH]
 
 log_api_delete:
-    path: /logs
+    path: /log-summaries/
     controller: G3\FrameworkPractice\Infrastructure\Endpoint\LogApiController::LogsOnMethodNotImplement
     methods: [DELETE]
 
 log_api_put:
-    path: /logs
+    path: /log-summaries/
     controller: G3\FrameworkPractice\Infrastructure\Endpoint\LogApiController::LogsOnMethodNotImplement
     methods: [PUT]

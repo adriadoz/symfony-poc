@@ -15,9 +15,15 @@ final class LogApiBuilder
         $this->logs = $logs;
     }
 
-    public function __invoke(): string
+    public function logSummaryFilter(array $filters): string
+    {
+        $levels = implode(',', $filters);
+
+        return json_encode($this->logs->summaryLogFilter($levels));
+    }
+
+    public function logSummary()
     {
         return json_encode($this->logs->summaryLog());
     }
-
 }
