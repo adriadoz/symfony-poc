@@ -2,23 +2,14 @@
 
 declare(strict_types = 1);
 
-namespace G3\FrameworkPractice\Infrastructure\UserCase;
+namespace G3\FrameworkPractice\Infrastructure\UseCase;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 final class UseCaseSearcherConsole extends Command
 {
-    private $container;
-
-    public function __construct(ContainerInterface $container)
-    {
-        parent::__construct();
-        $this->container = $container;
-    }
-
     protected function configure(): void
     {
         $this
@@ -28,7 +19,8 @@ final class UseCaseSearcherConsole extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): void
     {
+        $kernel   = $this->getApplication()->getKernel();
         $usesCase = new UseCaseSearcher();
-        $usesCase->__invoke($this->container);
+        $usesCase->__invoke($kernel);
     }
 }
