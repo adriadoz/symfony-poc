@@ -13,7 +13,7 @@ final class LogApiController
 {
     private const PATH = '../var/log/';
 
-    public function devSummaryLog(string $environment, Request $request)
+    public function summaryLog(string $environment, Request $request)
     {
         $filters = $request->query->get('filter');
 

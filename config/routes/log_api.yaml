@@ -2,7 +2,7 @@ log_api:
     path: /log-summaries/{environment}
     defaults:
         environment: dev
-    controller: G3\FrameworkPractice\Infrastructure\Endpoint\LogApiController::devSummaryLog
+    controller: G3\FrameworkPractice\Infrastructure\Endpoint\LogApiController::summaryLog
     methods: [GET]
 
 log_api_post:
