@@ -12,6 +12,8 @@ use Symfony\Component\Console\Question\Question;
 
 final class LogSummaryConsole extends Command
 {
+    const PATH = 'var/log/';
+
     protected function configure(): void
     {
         $this
@@ -30,10 +32,10 @@ final class LogSummaryConsole extends Command
         $environment = $this->getEnvironment($input, $output);
         $levels      = $this->getLevels($input, $output);
 
-        $logGetters = new LogSummaryGetter($environment);
+        $logGetters = new LogSummaryGetter(self::PATH, $environment);
         $logSummary = $logGetters->__invoke();
 
-        $this->print($logSummary->__invoke($levels), $output);
+        $this->print($logSummary->summaryLogFilter($levels), $output);
     }
 
     private function getEnvironment(InputInterface $input, OutputInterface $output): string

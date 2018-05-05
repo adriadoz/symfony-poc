@@ -16,16 +16,18 @@ use Symfony\Component\Serializer\Serializer;
 final class LogSummaryGetter
 {
     private $environment;
+    private $path;
 
-    public function __construct(string $environment)
+    public function __construct(string $path, string $environment)
     {
         $this->environment = $environment;
+        $this->path = $path;
     }
 
     public function __invoke(): LogSummary
     {
         $finder = new Finder();
-        $finder->files()->in('var/log/' . $this->environment);
+        $finder->files()->in($this->path . $this->environment);
 
         $logCollection = $this->getLastFiles($finder);
         $logSummary    = new LogSummary($logCollection);

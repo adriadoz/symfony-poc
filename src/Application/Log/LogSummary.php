@@ -15,17 +15,22 @@ final class LogSummary
         $this->content = $content;
     }
 
-    public function __invoke(string $levels): array
+    public function summaryLogFilter(string $levels): array
     {
         return $this->logByLevels($this->toArray($levels));
     }
 
-    public function logByLevels(array $levels): array
+    public function summaryLog(): array
+    {
+        return $this->logByLevels();
+    }
+
+    private function logByLevels(array $levels = []): array
     {
         $summary = [];
         foreach ($this->content->items() as $item) {
             $level = $item->levelName();
-            if (in_array($level, $levels)) {
+            if (in_array($level, $levels) || empty($levels)) {
                 if (array_key_exists($level, $summary)) {
                     $summary[$level] = $summary[$level] + 1;
                 } else {

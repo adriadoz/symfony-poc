@@ -1,0 +1,4 @@
+log_api:
+    path: /logs
+    controller: G3\FrameworkPractice\Infrastructure\Controller\LogApiController::__invoke
+    methods: [GET]
