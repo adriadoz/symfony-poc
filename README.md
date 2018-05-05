@@ -75,7 +75,7 @@ Se gestiona mostrar un error en caso de que exista un parametro get `?bum`  en l
 	    $this->logger->error('ErrorLogger');
 	}
 
-Luego se crea un filtro en `config/packages/prov/monolog.yaml` para guardar los los, solo cuando se produzca un error.
+Luego se crea un filtro en `config/packages/prod/monolog.yaml` para guardar los logs, solo cuando se produzca un error.
 
 ### Almacenar log en Json
 En monolog.yaml, se crea un nuevo fichero con extensión .json y se le indica que le de formato con la siguiente instrucción `formatter: json_log`
@@ -92,14 +92,14 @@ La consola, permite ejecutar sentencias o comandos personalizados. Los comandos 
 Para la instalación se usa la receta `php composer.phar require symfony/console`
 
 ### Estructura de directorio
-Antes de proseguir con la sesión 4, se reorganizaron los directorios, para alcanzar la arquitectura hexagonal y se personalizo el namespace correspondiendo al nombre del equipo.
+Antes de proseguir con la sesión 4, se reorganizaron los directorios, para alcanzar la arquitectura hexagonal y se personaliza el namespace correspondiendo al nombre del equipo.
 
 ### Console
 La consola, es una clase que extiende de Command y pese a no exigir, requiere dos métodos básicos para el funcionamiento
 
 `protected function configure()` principalmente se configura los datos del comando de linea.
 
-Para el Hello World, se utilizan la siguiente configuración
+Para el Hello World, se utiliza la siguiente configuración
 
 	    $this
 	        ->setName('message:hello')
@@ -116,7 +116,7 @@ Se instala la receta de symfony `symfony/serializer`
 
 Con ayuda de finder, se lee el directorio de log completo, en este caso recurrimos a llamar solo al día.
 
-Problemas, cada linea es un json, por lo cual hay que leer el fichero linea por linea, decodificarlo y luego codificarlo nuevamente antes de serializarlo.
+Problemas: cada linea es un json, por lo cual hay que leer el fichero linea a linea, decodificarlo y luego codificarlo nuevamente antes de serializarlo.
 
 Serialize, permite codificar en una clase la información de un json.
 
@@ -147,13 +147,29 @@ En el método `execute` comprobamos si el argumento está vacio, y en caso afirm
 
 Repetimos el mismo procedimiento para especificar los niveles de errores a filtrar.
 
-#Capítulo 5 reto 2/3
+##Sesión 5 - Dependency Injection Container
+
+### Encapsular la lógica de dominio del log summary console command
+
+Se crea la clase del caso de uso para el comando que devuelve el resumen de logs. El hecho de que los datos se devuelvan por la consola, no tiene nada que ver con la lógica de dominio. Por eso se hace un refactor sobre `LogSummary` y se divide la lógica de negocio en `LogSummaryGetter` y la representación de los datos por consola en la clase `LogSummaryConsole`.
+
+Inyectamos el servicio del caso de uso en el controlador del console command usando DIC con los flags a false:
 
 Cuando se desactiva `autoconfigure: false`, nos vemos obligados a configurar el servicio por medio de etiquetas, por ejemplo en el caso de comando, debemos indicar que es un comando de consola y que comando lo ejecuta.
 
 Cuando se desactiva `autowire: false`, las inyección de constructores, deben ser especificadas por argumentos en el servicio.
 
+### Reactivar el flag de autoconfigure
+Cuando se activa `autoconfigure: true` podemos eliminar los tags:
+`tags: - { name: 'console.command', command: 'log:summary' }`
 
+Cuando se activa `autowire: true` podemos eliminar la inyección del servicio:
+`arguments: -$sayMessage: '@G3\FrameworkPractice\Application\MessageCommand\SayHello'`
+
+### Implementar un servicio que recibe todos los casos de uso definidos en la app
+Creamos la clase `UseCaseSearcherConsole` que recibe un array de las instancias de servicios.
+A continuación lo modificamos para que de forma dinámica obtenga los serivicios taggeados `$container->findTaggedServiceIds('g3.use_case')`
+Para finalizar lo haremos de forma dinámica usando el compiler pass.
 
 
 
