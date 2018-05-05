@@ -6,8 +6,11 @@ services:
 
     G3\FrameworkPractice\Application\MessageCommand\SayHello:
 
+    G3\FrameworkPractice\Infrastructure\Log\LogSummaryConsole:
+
     G3\FrameworkPractice\Infrastructure\MessageCommand\HelloConsole:
 
     G3\FrameworkPractice\Application\Log\LogSummary:
 
-    G3\FrameworkPractice\Infrastructure\Log\LogSummaryConsole:
+    G3\FrameworkPractice\Infrastructure\UserCase\UseCaseSearcherConsole:
+        arguments: ['%use.cases%']
