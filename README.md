@@ -1,6 +1,6 @@
 # Grupo 3 - Taller de Symfony
 
-El equipo consta de 3 integrantes:
+El equipo consta de 2 integrantes:
  
  - Adrià
  - Mario
@@ -161,10 +161,17 @@ Cuando se desactiva `autowire: false`, las inyección de constructores, deben se
 
 ### Reactivar el flag de autoconfigure
 Cuando se activa `autoconfigure: true` podemos eliminar los tags:
-`tags: - { name: 'console.command', command: 'log:summary' }`
+
+        tags: - { 
+                    name: 'console.command', 
+                    command: 'log:summary' 
+                 }
 
 Cuando se activa `autowire: true` podemos eliminar la inyección del servicio:
-`arguments: -$sayMessage: '@G3\FrameworkPractice\Application\MessageCommand\SayHello'`
+
+        arguments: 
+                -$sayMessage: 
+                            '@G3\FrameworkPractice\Application\MessageCommand\SayHello'`
 
 ### Implementar un servicio que recibe todos los casos de uso definidos en la app
 Creamos la clase `UseCaseSearcherConsole` que recibe un array de las instancias de servicios.
@@ -174,10 +181,11 @@ Para finalizar lo haremos de forma dinámica usando el compiler pass.
 ##Sesión 6 - Routing API HTTP
 ###Implementar un HTTP endpoint que devuelva los logs en formato JSON
 Se añade una nueva ruta en yaml para que /logs devuelva los logs en formato JSON
-    `log_api:
-      - path: /logs
-      - controller: G3\FrameworkPractice\Infrastructure\Controller\LogApiController::__invoke
-      - methods: [GET]`
+         
+         log_api
+        - path: /logs
+        - controller: G3\FrameworkPractice\Infrastructure\Controller\LogApiController::__invoke
+        - methods: [GET]
 
 A continuación implementamos la ruta usando annotations añadiendo un comentario en el controlador:
      ` @Route("/logs", name="log_api") @Method({"GET"})`
@@ -187,7 +195,18 @@ Cambiamos la ruta de la API a `log-summaries` indicando el entorno `/dev` y perm
 En el yaml `log-api` añadimos el siguiente path `path: /log-summaries/{environment} defaults: environment: dev` para indicar el entorno.
 Finalmente eliminamos todas las annotations routes para dejar las rutas en el yaml, tal y como haciamos desde el principio.
 
+###Implementar un endpoint que inserte logs desde un servidor externo
+Hemos añadido un endpoint para peticiones con método POST para añadir logs en `/var/log/database` mediante una url tal que `http://127.0.0.1:8000/log-summaries/?type=info&message=Warning to the log on each request to Hello Word`
+donde el parámetro `type` marca el tipo de error y `message` el mensaje de error como tal.
 
+###Cachear las peticiones tipo GET durante 30 segundos
+Haremos uso de `CacheKernel` para setear en el header de la respuesta a 30 segundos el tiempo máximo válido:
+        
+        $kernel = new CacheKernel($kernel);
+        $response->setSharedMaxAge(30);
+        
+
+        
 
 [1]:	https://getcomposer.org/download/1.6.3/composer.phar "Binario de composer v1.6.3 sha256: 52cb7bbbaee720471e3b34c8ae6db53a38f0b759c06078a80080db739e4dcab6"
 [2]:	https://bitbucket.org/mupwar/symfony_g3 "Repositorio Grupo 3"
