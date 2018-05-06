@@ -4,17 +4,19 @@ declare(strict_types = 1);
 
 namespace G3\FrameworkPractice\Domain\Log;
 
+use G3\FrameworkPractice\Types\ValueObject\Level;
+
 final class LogEntry
 {
     private $message;
     private $channel;
-    private $levelName;
+    private $level;
 
     public function __construct(string $message, string $channel, string $levelName)
     {
         $this->message   = $message;
         $this->channel   = $channel;
-        $this->levelName = $levelName;
+        $this->level = Level::fromString($levelName);
     }
 
     public function message(): string
@@ -29,6 +31,6 @@ final class LogEntry
 
     public function levelName(): string
     {
-        return $this->levelName;
+        return $this->level->__toString();
     }
 }

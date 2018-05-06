@@ -5,8 +5,9 @@ declare(strict_types = 1);
 namespace G3\FrameworkPractice\Infrastructure\Endpoint;
 
 use G3\FrameworkPractice\Application\Endpoint\LogApiBuilder;
+use G3\FrameworkPractice\Domain\Log\LogEntry;
+use G3\FrameworkPractice\Domain\Log\Repository\LogRepositoryInterface;
 use G3\FrameworkPractice\Infrastructure\Log\LogSummaryGetter;
-use Monolog\Logger;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -14,6 +15,12 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 final class LogApiController extends Controller
 {
     private const PATH = '../var/log/';
+    private $repository;
+
+    public function __construct(LogRepositoryInterface $repository)
+    {
+        $this->repository = $repository;
+    }
 
     public function read(string $environment, Request $request): Response
     {
@@ -33,9 +40,11 @@ final class LogApiController extends Controller
         $type    = strtoupper($request->query->get('type'));
         $message = $request->query->get('message');
 
+        $logEntry = new LogEntry($message, "app", $type);
+
         $logger = $this->getLogExternalChannel();
 
-        $this->saveLog($logger, $type , $message);
+        $this->repository->saveLog($logger, $logEntry);
 
         $response = new Response();
         $response->setStatusCode(201);
@@ -75,25 +84,5 @@ final class LogApiController extends Controller
         $logger = $this->get('monolog.logger.external');
 
         return $logger;
-    }
-
-    private function saveLog(Logger $logger, string $type, string $message): void
-    {
-        switch ($type) {
-            case 'DEBUG':
-                $logger->debug($message);
-                break;
-            case 'WARNING':
-                $logger->warning($message);
-                break;
-            case 'CRITICAL':
-                $logger->critical($message);
-                break;
-            case 'ERROR':
-                $logger->error($message);
-                break;
-            default:
-                $logger->info($message);
-        }
     }
 }
