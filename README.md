@@ -171,6 +171,22 @@ Creamos la clase `UseCaseSearcherConsole` que recibe un array de las instancias 
 A continuación lo modificamos para que de forma dinámica obtenga los serivicios taggeados `$container->findTaggedServiceIds('g3.use_case')`
 Para finalizar lo haremos de forma dinámica usando el compiler pass.
 
+##Sesión 6 - Routing API HTTP
+###Implementar un HTTP endpoint que devuelva los logs en formato JSON
+Se añade una nueva ruta en yaml para que /logs devuelva los logs en formato JSON
+    `log_api:
+      - path: /logs
+      - controller: G3\FrameworkPractice\Infrastructure\Controller\LogApiController::__invoke
+      - methods: [GET]`
+
+A continuación implementamos la ruta usando annotations añadiendo un comentario en el controlador:
+     ` @Route("/logs", name="log_api") @Method({"GET"})`
+ 
+Filtramos todos los métodos que no sean GET llamando al método del controlador `LogApiController` que devuelve un 405.
+Cambiamos la ruta de la API a `log-summaries` indicando el entorno `/dev` y permitiendo filtrar mediante un parámetro en la misma URL.
+En el yaml `log-api` añadimos el siguiente path `path: /log-summaries/{environment} defaults: environment: dev` para indicar el entorno.
+Finalmente eliminamos todas las annotations routes para dejar las rutas en el yaml, tal y como haciamos desde el principio.
+
 
 
 [1]:	https://getcomposer.org/download/1.6.3/composer.phar "Binario de composer v1.6.3 sha256: 52cb7bbbaee720471e3b34c8ae6db53a38f0b759c06078a80080db739e4dcab6"
