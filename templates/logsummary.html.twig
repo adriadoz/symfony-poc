@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block content %}
+
+    <header>
+        <h1>LogSummary from Team 3 and environment: {{ environment }}</h1>
+    </header>
+
+    <main>
+        <ul>
+            {% for log in logs %}
+                <li>{{ logs }}</li>
+            {% endfor %}
+        </ul>
+    </main>
+
+{% endblock %}
