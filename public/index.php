@@ -4,6 +4,8 @@ use G3\FrameworkPractice\Infrastructure\Kernel;
 use Symfony\Component\Debug\Debug;
 use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\HttpFoundation\Request;
+use G3\FrameworkPractice\Infrastructure\CacheKernel;
+
 
 require __DIR__ . '/../vendor/autoload.php';
 
@@ -38,7 +40,9 @@ if ($trustedHosts = $_SERVER['TRUSTED_HOSTS'] ?? false) {
 }
 
 $kernel   = new Kernel($env, $debug);
+$kernel = new CacheKernel($kernel);
 $request  = Request::createFromGlobals();
 $response = $kernel->handle($request);
+$response->setSharedMaxAge(30);
 $response->send();
 $kernel->terminate($request, $response);
