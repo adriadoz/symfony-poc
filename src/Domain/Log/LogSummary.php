@@ -27,14 +27,7 @@ final class LogSummary
     {
         $summary = [];
         foreach ($this->logEntries->items() as $item) {
-            $level = $item->levelName();
-            if (in_array($level, $levels) || empty($levels)) {
-                if (array_key_exists($level, $summary)) {
-                    $summary[$level] = $summary[$level] + 1;
-                } else {
-                    $summary[$level] = 1;
-                }
-            }
+            $summary = $this->increaseLogLevels($levels, $item, $summary);
         }
 
         if (empty($summary)) {
@@ -50,5 +43,19 @@ final class LogSummary
         $levels        = explode(",", $lowCaseLevels);
 
         return $levels;
+    }
+
+    private function increaseLogLevels(array $levels, LogEntry $item, array $summary): array
+    {
+        $level = $item->levelName();
+        if (in_array($level, $levels) || empty($levels)) {
+            if (array_key_exists($level, $summary)) {
+                $summary[$level] = $summary[$level] + 1;
+            } else {
+                $summary[$level] = 1;
+            }
+        }
+
+        return $summary;
     }
 }
