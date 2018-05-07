@@ -2,11 +2,12 @@
 <html>
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="{{ asset('build/app.css')}}">
     <title>{% block title %}Welcome!{% endblock %}</title>
-    {% block stylesheets %}{% endblock %}
 </head>
 <body>
     {% block content %}{% endblock %}
-    {% block css %}{% endblock %}
+
+    <script src="{{ asset('build/app.js') }}"></script>
 </body>
 </html>
