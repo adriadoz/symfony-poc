@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace G3\FrameworkPractice\Infrastructure\Log;
 
-use G3\FrameworkPractice\Application\Log\LogSummary;
+use G3\FrameworkPractice\Application\Log\LogSummaryBuilder;
 use G3\FrameworkPractice\Domain\Log\LogEntry;
 use G3\FrameworkPractice\Domain\Log\LogEntryCollection;
 use Symfony\Component\Finder\Finder;
@@ -24,13 +24,13 @@ final class LogSummaryGetter
         $this->path        = $path;
     }
 
-    public function __invoke(): LogSummary
+    public function __invoke(): LogSummaryBuilder
     {
         $finder = new Finder();
         $finder->files()->in($this->path . $this->environment);
 
         $logCollection = $this->getLastFiles($finder);
-        $logSummary    = new LogSummary($logCollection);
+        $logSummary    = new LogSummaryBuilder($logCollection);
 
         return $logSummary;
     }

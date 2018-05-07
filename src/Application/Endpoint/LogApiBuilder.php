@@ -4,13 +4,13 @@ declare(strict_types = 1);
 
 namespace G3\FrameworkPractice\Application\Endpoint;
 
-use G3\FrameworkPractice\Application\Log\LogSummary;
+use G3\FrameworkPractice\Application\Log\LogSummaryBuilder;
 
 final class LogApiBuilder
 {
     private $logs;
 
-    public function __construct(LogSummary $logs)
+    public function __construct(LogSummaryBuilder $logs)
     {
         $this->logs = $logs;
     }
