@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace G3\FrameworkPractice\Infrastructure\Endpoint;
 
-use G3\FrameworkPractice\Application\Endpoint\LogApiBuilder;
+use G3\FrameworkPractice\Application\Log\LogSummaryBuilder;
 use G3\FrameworkPractice\Domain\Log\LogEntry;
 use G3\FrameworkPractice\Domain\Log\Repository\LogRepositoryInterface;
 use G3\FrameworkPractice\Infrastructure\Log\LogSummaryGetter;
@@ -26,12 +26,12 @@ final class LogApiController extends Controller
     public function read(string $environment, Request $request): Response
     {
         $this->environment = $environment;
-        $filters           = $request->query->get('filter');
 
-        $logSummary    = new LogSummaryGetter(self::PATH, $environment);
-        $logApiBuilder = new LogApiBuilder($logSummary->__invoke());
+        $levels = $this->getFilteredLevel($request);
 
-        $response = $this->setContent($filters, $logApiBuilder);
+        $logSummary = new LogSummaryGetter(self::PATH, $environment);
+
+        $response = $this->setContent($levels, $logSummary->__invoke());
         $response->headers->set('Content-Type', 'text/html; charset=UTF-8');
 
         return $response;
@@ -59,23 +59,13 @@ final class LogApiController extends Controller
         return $this->whenTheMethodHasNotBeenImplemented();
     }
 
-    private function setContent($filters, LogApiBuilder $logApiBuilder): Response
+    private function setContent(array $levels, LogSummaryBuilder $logSummary): Response
     {
-        if (!isset($filters)) {
-            return $this->render(
-                'logSummary.html.twig',
-                [
-                    'environment' => $this->environment,
-                    'logs'        => json_decode($logApiBuilder->logSummary(), true),
-                ]
-            );
-        }
-
         return $this->render(
             'logSummary.html.twig',
             [
                 'environment' => $this->environment,
-                'logs'        => json_decode($logApiBuilder->logSummaryFilter($filters), true),
+                'logs'        => $logSummary->__invoke($levels),
             ]
         );
     }
@@ -93,5 +83,26 @@ final class LogApiController extends Controller
         $logger = $this->get('monolog.logger.external');
 
         return $logger;
+    }
+
+    private function toArray($levels): array
+    {
+        $lowCaseLevels = strtoupper($levels);
+        $levels        = explode(",", $lowCaseLevels);
+
+        return $levels;
+    }
+
+    private function getFilteredLevel(Request $request): array
+    {
+        $filter = $request->query->get('filter');
+
+        if(empty($filter)) {
+            return [];
+        }
+
+        $levels = $this->toArray($filter['level']);
+
+        return $levels;
     }
 }

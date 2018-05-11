@@ -206,9 +206,24 @@ Haremos uso de `CacheKernel` para setear en el header de la respuesta a 30 segun
         $response->setSharedMaxAge(30);
         
 
-        
+# API Log Examples:
+
+**Para Dev**
+[http://localhost:8000/log-summaries/dev?filter\[level\]=warning,error][5]
+
+[http://localhost:8000/log-summaries/dev][6]
+
+**Para Prod**
+[http://localhost:8000/log-summaries/prod][7]
+
+[http://localhost:8000/log-summaries/dev?filter\[level\]=info,error][8]
+
 
 [1]:	https://getcomposer.org/download/1.6.3/composer.phar "Binario de composer v1.6.3 sha256: 52cb7bbbaee720471e3b34c8ae6db53a38f0b759c06078a80080db739e4dcab6"
 [2]:	https://bitbucket.org/mupwar/symfony_g3 "Repositorio Grupo 3"
 [3]:	https://github.com/MarioDevment/VagranDebianServer "Maquina Virtual - Vagrant y Ansible"
 [4]:	http://localhost:8000/custom "Ruta custom, para nombre de entorno personalizado"
+[5]:	http://localhost:8000/log-summaries/dev?filter[level]=warning,error
+[6]:	http://localhost:8000/log-summaries/dev
+[7]:	http://localhost:8000/log-summaries/prod
+[8]:	http://localhost:8000/log-summaries/dev?filter[level]=info,error
