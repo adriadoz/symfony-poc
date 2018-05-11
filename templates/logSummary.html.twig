@@ -2,16 +2,26 @@
 
 {% block content %}
 
-    <header>
-        <h1>LogSummary from Team 3 and environment: {{ environment }}</h1>
-    </header>
+        <header class="px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+            <div class="container">
+                <h1 class="display-5">LogSummary from Team 3 and environment: {{ environment }}</h1>
+            </div>
+        </header>
 
-    <main>
-        <ul>
-            {% for log in logs %}
-                <li>{{ log }}</li>
-            {% endfor %}
-        </ul>
-    </main>
-
+        <main>
+            <div class="container">
+                <table class="table table-striped">
+                    <tr>
+                        <th>Level</th>
+                        <th>Summary</th>
+                    </tr>
+                    {% for key,log in logs %}
+                        <tr>
+                            <td>{{ key }}</td>
+                            <td>{{ log }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </main>
 {% endblock %}
