@@ -19,4 +19,9 @@ final class LogEventDispatcher extends Event
     {
         return "Event " . $this->eventName . " success!";
     }
+
+    public function remotelyAdded()
+    {
+        return "You added an error to log handler!";
+    }
 }

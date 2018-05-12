@@ -7,8 +7,10 @@ namespace G3\FrameworkPractice\Infrastructure\Endpoint;
 use G3\FrameworkPractice\Application\Log\LogSummaryBuilder;
 use G3\FrameworkPractice\Domain\Log\LogEntry;
 use G3\FrameworkPractice\Domain\Log\Repository\LogRepositoryInterface;
+use G3\FrameworkPractice\Infrastructure\Log\LogEventDispatcher;
 use G3\FrameworkPractice\Infrastructure\Log\LogSummaryGetter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -17,6 +19,8 @@ final class LogApiController extends Controller
     private const PATH = '../var/log/';
     private $repository;
     private $environment;
+    private const ERROR   = "ERROR";
+    private const CHANNEL = "external";
 
     public function __construct(LogRepositoryInterface $repository)
     {
@@ -42,7 +46,11 @@ final class LogApiController extends Controller
         $type    = strtoupper($request->query->get('type'));
         $message = $request->query->get('message');
 
-        $logEntry = new LogEntry($message, "app", $type);
+        if ($type === self::ERROR) {
+            $this->addDispatcher();
+        }
+
+        $logEntry = new LogEntry($message, self::CHANNEL, $type);
 
         $logger = $this->getLogExternalChannel();
 
@@ -97,12 +105,27 @@ final class LogApiController extends Controller
     {
         $filter = $request->query->get('filter');
 
-        if(empty($filter)) {
+        if (empty($filter)) {
             return [];
         }
 
         $levels = $this->toArray($filter['level']);
 
         return $levels;
+    }
+
+    private function addDispatcher(): void
+    {
+        $dispatcher      = new EventDispatcher();
+        $logRecordRaised = 'log_record.remotely_added';
+
+        $dispatcher->addListener(
+            $logRecordRaised,
+            function (LogEventDispatcher $event) {
+                echo $event->remotelyAdded();
+            }
+        );
+
+        $dispatcher->dispatch($logRecordRaised, new LogEventDispatcher($logRecordRaised));
     }
 }
