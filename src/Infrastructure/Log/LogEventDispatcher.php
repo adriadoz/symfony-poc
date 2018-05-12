@@ -10,6 +10,11 @@ final class LogEventDispatcher extends Event
 {
     public function locallyRaised()
     {
-        dump("Event log_record.locally_raised success!");
+        echo "Event log_record.locally_raised success!";
+    }
+
+    public function remotelyAdded()
+    {
+        echo "You added an error to log handler!";
     }
 }

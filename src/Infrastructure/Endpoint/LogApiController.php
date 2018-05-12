@@ -7,8 +7,11 @@ namespace G3\FrameworkPractice\Infrastructure\Endpoint;
 use G3\FrameworkPractice\Application\Log\LogSummaryBuilder;
 use G3\FrameworkPractice\Domain\Log\LogEntry;
 use G3\FrameworkPractice\Domain\Log\Repository\LogRepositoryInterface;
+use G3\FrameworkPractice\Domain\Log\ValueObjects\LogLevelName;
+use G3\FrameworkPractice\Infrastructure\Log\LogEventDispatcher;
 use G3\FrameworkPractice\Infrastructure\Log\LogSummaryGetter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -18,10 +21,12 @@ final class LogApiController extends Controller
     private $repository;
     private $environment;
     private const CHANNEL = "external";
+    private $eventDispatcher;
 
-    public function __construct(LogRepositoryInterface $repository)
+    public function __construct(LogRepositoryInterface $repository, EventDispatcherInterface $eventDispatcher)
     {
-        $this->repository = $repository;
+        $this->repository      = $repository;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     public function read(string $environment, Request $request): Response
@@ -42,6 +47,8 @@ final class LogApiController extends Controller
     {
         $type    = strtoupper($request->query->get('type'));
         $message = $request->query->get('message');
+
+        $this->onErrorDispatcher($type);
 
         $logEntry = new LogEntry($message, self::CHANNEL, $type);
 
@@ -105,5 +112,17 @@ final class LogApiController extends Controller
         $levels = $this->toArray($filter['level']);
 
         return $levels;
+    }
+
+    private function onErrorDispatcher($type): void
+    {
+        $errorType = LogLevelName::Error();
+
+        if ($type === $errorType) {
+            $this->eventDispatcher->dispatch(
+                'log_record.remotely_added',
+                new LogEventDispatcher()
+            );
+        }
     }
 }

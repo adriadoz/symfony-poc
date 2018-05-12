@@ -38,3 +38,4 @@ services:
     G3\FrameworkPractice\Infrastructure\Log\LogEventDispatcher:
         tags:
             - { name: kernel.event_listener, event: log_record.locally_raised, method: locallyRaised }
+            - { name: kernel.event_listener, event: log_record.remotely_added, method: remotelyAdded }
