@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace G3\FrameworkPractice\Infrastructure\Controller;
 
+use G3\FrameworkPractice\Infrastructure\Log\LogEventDispatcher;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -55,6 +56,12 @@ final class MainController extends Controller
 
         if ($request->query->has('bum')) {
             $this->logger->error('Error, send GET key bum', ["Error" => "Context Param"]);
+
+            $this->eventDispatcher->dispatch(
+                'log_record.locally_raised',
+                new LogEventDispatcher()
+            );
+
         }
     }
 }

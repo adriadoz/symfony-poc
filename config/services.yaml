@@ -34,3 +34,7 @@ services:
 
     json_log:
         class: Monolog\Formatter\JsonFormatter
+
+    G3\FrameworkPractice\Infrastructure\Log\LogEventDispatcher:
+        tags:
+            - { name: kernel.event_listener, event: log_record.locally_raised, method: locallyRaised }

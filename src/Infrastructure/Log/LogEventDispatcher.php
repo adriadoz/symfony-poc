@@ -8,5 +8,8 @@ use Symfony\Component\EventDispatcher\Event;
 
 final class LogEventDispatcher extends Event
 {
-
+    public function locallyRaised()
+    {
+        dump("Event log_record.locally_raised success!");
+    }
 }
