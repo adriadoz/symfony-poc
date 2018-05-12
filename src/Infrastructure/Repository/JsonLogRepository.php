@@ -5,6 +5,7 @@ namespace G3\FrameworkPractice\Infrastructure\Repository;
 
 use G3\FrameworkPractice\Domain\Log\LogEntry;
 use G3\FrameworkPractice\Domain\Log\Repository\LogRepositoryInterface;
+use G3\FrameworkPractice\Domain\Log\ValueObjects\LogLevelName;
 use Monolog\Logger;
 
 final class JsonLogRepository implements LogRepositoryInterface
@@ -13,16 +14,16 @@ final class JsonLogRepository implements LogRepositoryInterface
     {
         $message = $log->message();
         switch ($log->levelName()) {
-            case 'DEBUG':
+            case LogLevelName::Debug():
                 $logger->debug($message);
                 break;
-            case 'WARNING':
+            case LogLevelName::Warning():
                 $logger->warning($message);
                 break;
-            case 'CRITICAL':
+            case LogLevelName::Critical():
                 $logger->critical($message);
                 break;
-            case 'ERROR':
+            case LogLevelName::Error():
                 $logger->error($message);
                 break;
             default:

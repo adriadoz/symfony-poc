@@ -7,6 +7,7 @@ namespace G3\FrameworkPractice\Infrastructure\Endpoint;
 use G3\FrameworkPractice\Application\Log\LogSummaryBuilder;
 use G3\FrameworkPractice\Domain\Log\LogEntry;
 use G3\FrameworkPractice\Domain\Log\Repository\LogRepositoryInterface;
+use G3\FrameworkPractice\Domain\Log\ValueObjects\LogLevelName;
 use G3\FrameworkPractice\Infrastructure\Log\LogEventDispatcher;
 use G3\FrameworkPractice\Infrastructure\Log\LogSummaryGetter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -19,7 +20,6 @@ final class LogApiController extends Controller
     private const PATH = '../var/log/';
     private $repository;
     private $environment;
-    private const ERROR   = "ERROR";
     private const CHANNEL = "external";
 
     public function __construct(LogRepositoryInterface $repository)
@@ -46,9 +46,7 @@ final class LogApiController extends Controller
         $type    = strtoupper($request->query->get('type'));
         $message = $request->query->get('message');
 
-        if ($type === self::ERROR) {
-            $this->addDispatcher();
-        }
+        $this->onErrorDispatcher($type);
 
         $logEntry = new LogEntry($message, self::CHANNEL, $type);
 
@@ -112,6 +110,15 @@ final class LogApiController extends Controller
         $levels = $this->toArray($filter['level']);
 
         return $levels;
+    }
+
+    private function onErrorDispatcher($type): void
+    {
+        $errorType = LogLevelName::Error();
+
+        if ($type === $errorType) {
+            $this->addDispatcher();
+        }
     }
 
     private function addDispatcher(): void
