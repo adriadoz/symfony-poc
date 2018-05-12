@@ -8,7 +8,7 @@ final class LogErrorLevel
 {
     private const LEVEL = 'ERROR';
 
-    public function value()
+    public function value(): string
     {
         return self::LEVEL;
     }

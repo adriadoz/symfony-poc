@@ -8,12 +8,12 @@ use Symfony\Component\EventDispatcher\Event;
 
 final class LogEventDispatcher extends Event
 {
-    public function locallyRaised()
+    public function locallyRaised(): string
     {
         echo "Event log_record.locally_raised success!";
     }
 
-    public function remotelyAdded()
+    public function remotelyAdded(): string
     {
         echo "You added an error to log handler!";
     }

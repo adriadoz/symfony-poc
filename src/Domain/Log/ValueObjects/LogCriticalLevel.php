@@ -8,7 +8,7 @@ final class LogCriticalLevel
 {
     private const LEVEL = 'CRITICAL';
 
-    public function value()
+    public function value(): string
     {
         return self::LEVEL;
     }

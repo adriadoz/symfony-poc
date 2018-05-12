@@ -8,7 +8,7 @@ final class LogDebugLevel
 {
     private const LEVEL = 'DEBUG';
 
-    public function value()
+    public function value(): string
     {
         return self::LEVEL;
     }

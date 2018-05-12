@@ -30,10 +30,10 @@ final class LogSummaryConsole extends Command
     protected function execute(InputInterface $input, OutputInterface $output): void
     {
         $environment = $this->getEnvironment($input, $output);
-        $levelsRaw      = $this->getLevels($input, $output);
-        $levels = $this->toArray($levelsRaw);
-        $logGetters = new LogSummaryGetter(self::PATH, $environment);
-        $logSummary = $logGetters->__invoke();
+        $levelsRaw   = $this->getLevels($input, $output);
+        $levels      = $this->toArray($levelsRaw);
+        $logGetters  = new LogSummaryGetter(self::PATH, $environment);
+        $logSummary  = $logGetters->__invoke();
 
         $this->print($logSummary->__invoke($levels), $output);
     }
@@ -77,5 +77,4 @@ final class LogSummaryConsole extends Command
 
         return $levels;
     }
-
 }

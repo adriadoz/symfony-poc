@@ -16,9 +16,10 @@ final class LogSummaryBuilder
         $this->content = $content;
     }
 
-    public function __invoke(array $levels = []): array{
+    public function __invoke(array $levels = []): array
+    {
         $logSummary = new LogSummary($this->content);
+
         return $logSummary->__invoke($levels);
     }
-
 }

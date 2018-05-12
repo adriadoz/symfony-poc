@@ -8,7 +8,7 @@ final class LogInfoLevel
 {
     private const LEVEL = 'INFO';
 
-    public function value()
+    public function value(): string
     {
         return self::LEVEL;
     }

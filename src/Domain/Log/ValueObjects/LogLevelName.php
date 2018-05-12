@@ -6,28 +6,38 @@ namespace G3\FrameworkPractice\Domain\Log\ValueObjects;
 
 final class LogLevelName
 {
-    static function Error() {
+    static function Error(): string
+    {
         $level = new LogErrorLevel();
+
         return $level->value();
     }
 
-    static function Critical() {
+    static function Critical(): string
+    {
         $level = new LogCriticalLevel();
+
         return $level->value();
     }
 
-    static function Warning() {
+    static function Warning(): string
+    {
         $level = new LogWarningLevel();
+
         return $level->value();
     }
 
-    static function Debug() {
+    static function Debug(): string
+    {
         $level = new LogDebugLevel();
+
         return $level->value();
     }
 
-    static function Info() {
+    static function Info(): string
+    {
         $level = new LogInfoLevel();
+
         return $level->value();
     }
 }

@@ -8,7 +8,7 @@ final class LogWarningLevel
 {
     private const LEVEL = 'WARNING';
 
-    public function value()
+    public function value(): string
     {
         return self::LEVEL;
     }

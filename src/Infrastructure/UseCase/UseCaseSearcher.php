@@ -36,7 +36,6 @@ final class UseCaseSearcher
 
     public function callBackContainer(): Closure
     {
-        /** @noinspection PhpUndefinedMethodInspection */
         return $this->buildContainer();
     }
 

@@ -6,7 +6,7 @@ namespace G3\FrameworkPractice\Application\MessageCommand;
 
 final class SayHello
 {
-    public function __invoke()
+    public function __invoke(): string
     {
         return "Hello Word";
     }

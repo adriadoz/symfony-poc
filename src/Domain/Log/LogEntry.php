@@ -14,9 +14,9 @@ final class LogEntry
 
     public function __construct(string $message, string $channel, string $levelName)
     {
-        $this->message   = $message;
-        $this->channel   = $channel;
-        $this->level = Level::fromString($levelName);
+        $this->message = $message;
+        $this->channel = $channel;
+        $this->level   = Level::fromString($levelName);
     }
 
     public function message(): string

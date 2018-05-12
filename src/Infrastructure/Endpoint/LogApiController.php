@@ -18,9 +18,9 @@ use Symfony\Component\HttpFoundation\Response;
 final class LogApiController extends Controller
 {
     private const PATH = '../var/log/';
+    private const CHANNEL = "external";
     private $repository;
     private $environment;
-    private const CHANNEL = "external";
     private $eventDispatcher;
 
     public function __construct(LogRepositoryInterface $repository, EventDispatcherInterface $eventDispatcher)

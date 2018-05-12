@@ -31,7 +31,7 @@ final class MainController extends Controller
         $this->eventDispatcher = $eventDispatcher;
     }
 
-    public function showHelloEnv(Request $request)
+    public function showHelloEnv(Request $request): Response
     {
         $this->setLogRecords($request);
 
@@ -40,7 +40,7 @@ final class MainController extends Controller
         );
     }
 
-    public function showHelloEnvName(Request $request)
+    public function showHelloEnvName(Request $request): Response
     {
         $this->setLogRecords($request);
 
@@ -61,7 +61,6 @@ final class MainController extends Controller
                 'log_record.locally_raised',
                 new LogEventDispatcher()
             );
-
         }
     }
 }
