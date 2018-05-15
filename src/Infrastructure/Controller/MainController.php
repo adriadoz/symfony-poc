@@ -59,7 +59,7 @@ final class MainController extends Controller
 
             $this->eventDispatcher->dispatch(
                 'log_record.locally_raised',
-                new LogEventDispatcher()
+                new LogEventDispatcher($this->environment)
             );
         }
     }
