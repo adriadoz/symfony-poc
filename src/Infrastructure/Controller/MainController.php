@@ -5,31 +5,35 @@ declare(strict_types = 1);
 namespace G3\FrameworkPractice\Infrastructure\Controller;
 
 use G3\FrameworkPractice\Infrastructure\Log\LogEventDispatcher;
+use Prooph\ServiceBus\Plugin\Router\CommandRouter;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Prooph\ServiceBus\CommandBus;
+
 
 final class MainController extends Controller
 {
     private $environment;
     private $environmentName;
     private $logger;
-    /** @var EventDispatcherInterface */
     private $eventDispatcher;
+    private $router;
 
 
     public function __construct(
         string $environment,
         string $environmentName,
-        LoggerInterface $logger,
-        EventDispatcherInterface $eventDispatcher
+        LoggerInterface $logger
     ) {
         $this->logger          = $logger;
         $this->environment     = $environment;
         $this->environmentName = $environmentName;
-        $this->eventDispatcher = $eventDispatcher;
+        $this->eventDispatcher = new CommandBus();
+        $this->router = new CommandRouter();
+        $this->router->route('log_record.locally_raised')->to(new LogEventDispatcher($this->environment));
+        $this->router->attachToMessageBus($this->eventDispatcher);
     }
 
     public function showHelloEnv(Request $request): Response
@@ -58,10 +62,7 @@ final class MainController extends Controller
         if ($request->query->has('bum')) {
             $this->logger->error('Error, send GET key bum', ["Error" => "Context Param"]);
 
-            $this->eventDispatcher->dispatch(
-                'log_record.locally_raised',
-                new LogEventDispatcher($this->environment)
-            );
+            $this->eventDispatcher->dispatch('log_record.locally_raised');
         }
     }
 }

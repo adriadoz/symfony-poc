@@ -6,9 +6,8 @@ namespace G3\FrameworkPractice\Infrastructure\Log;
 
 use G3\FrameworkPractice\Application\Log\LogSummaryCalculator;
 use G3\FrameworkPractice\Infrastructure\Repository\JsonLogSummaryRepository;
-use Symfony\Component\EventDispatcher\Event;
 
-final class LogEventDispatcher extends Event
+final class LogEventDispatcher
 {
     private const PATH = "../var/log/";
     private $environment;
@@ -18,17 +17,8 @@ final class LogEventDispatcher extends Event
         $this->environment = $environment;
     }
 
-    public function locallyRaised()
-    {
-        $this->updateLogSummaryInMemory();
-    }
-
-    public function remotelyAdded()
-    {
-        $this->updateLogSummaryInMemory();
-    }
-
-    private function updateLogSummaryInMemory(){
+    public function __invoke(){
+        echo 'hola';
         $logSummaryCalculator = new LogSummaryCalculator($this->environment, SELF::PATH);
         $logSummary = $logSummaryCalculator->__invoke();
         $repo = new JsonLogSummaryRepository(SELF::PATH);
