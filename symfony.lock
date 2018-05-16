@@ -1,4 +1,7 @@
 {
+    "beberlei/assert": {
+        "version": "v2.9.5"
+    },
     "doctrine/annotations": {
         "version": "1.0",
         "recipe": {
@@ -26,6 +29,15 @@
     "monolog/monolog": {
         "version": "1.23.0"
     },
+    "paragonie/random_compat": {
+        "version": "v2.0.12"
+    },
+    "prooph/common": {
+        "version": "v4.2.2"
+    },
+    "prooph/service-bus": {
+        "version": "v6.2.2"
+    },
     "psr/cache": {
         "version": "1.0.1"
     },
@@ -37,6 +49,9 @@
     },
     "psr/simple-cache": {
         "version": "1.0.1"
+    },
+    "ramsey/uuid": {
+        "version": "3.7.3"
     },
     "sensio/framework-extra-bundle": {
         "version": "4.0",
