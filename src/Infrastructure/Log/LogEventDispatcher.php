@@ -4,6 +4,8 @@ declare(strict_types = 1);
 
 namespace G3\FrameworkPractice\Infrastructure\Log;
 
+use G3\FrameworkPractice\Application\Log\LogSummaryCalculator;
+use G3\FrameworkPractice\Infrastructure\Repository\JsonLogSummaryRepository;
 use Symfony\Component\EventDispatcher\Event;
 
 final class LogEventDispatcher extends Event
@@ -17,12 +19,18 @@ final class LogEventDispatcher extends Event
 
     public function locallyRaised()
     {
-        var_dump($this->environment);
-        echo "Event log_record.locally_raised success!";
+        $this->updateLogSummaryInMemory();
     }
 
     public function remotelyAdded()
     {
-        echo "You added an error to log handler!";
+        $this->updateLogSummaryInMemory();
+    }
+
+    private function updateLogSummaryInMemory(){
+        $logSummaryCalculator = new LogSummaryCalculator($this->environment);
+        $logSummary = $logSummaryCalculator->__invoke();
+        $repo = new JsonLogSummaryRepository();
+        $repo->saveLogSummary($logSummary,  $this->environment);
     }
 }

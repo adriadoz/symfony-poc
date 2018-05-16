@@ -15,22 +15,22 @@ use Symfony\Component\Finder\Finder;
 
 final class LogSummaryCalculator
 {
+    private const PATH = '../var/log/';
     private $environment;
-    private $path;
 
-    public function __construct(string $path, string $environment)
+    public function __construct(string $environment)
     {
         $this->environment = $environment;
-        $this->path        = $path;
     }
 
     public function __invoke(): LogSummary
     {
         $finder = new Finder();
-        $finder->files()->in($this->path . $this->environment);
+        $finder->files()->in(SELF::PATH . $this->environment);
 
         $logCollection = $this->getLastFiles($finder);
-        $logSummary    = new LogSummary($logCollection);
+        $logSummary    = new LogSummary();
+        $logSummary->addCollection($logCollection);
         return $logSummary;
     }
 

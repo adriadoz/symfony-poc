@@ -35,7 +35,7 @@ final class LogSummaryConsole extends Command
         $levelsRaw   = $this->getLevels($input, $output);
         $levels      = $this->toArray($levelsRaw);
         $logSummaryRepo = new JsonLogSummaryRepository();
-        $logSummaryCalculator = new LogSummaryCalculator(SELF::PATH, $environment);
+        $logSummaryCalculator = new LogSummaryCalculator($environment);
         $logGetters  = new LogSummaryGetter($environment, $logSummaryRepo, $logSummaryCalculator);
         $logSummary  = $logGetters->__invoke();
 

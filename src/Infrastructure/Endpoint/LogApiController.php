@@ -19,7 +19,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class LogApiController extends Controller
 {
-    private const PATH = '../var/log/';
     private const CHANNEL = "external";
     private $repository;
     private $environment;
@@ -37,7 +36,7 @@ final class LogApiController extends Controller
 
         $levels = $this->getFilteredLevel($request);
         $logSummaryRepo = new JsonLogSummaryRepository();
-        $logSummaryCalculator = new LogSummaryCalculator(SELF::PATH, $this->environment);
+        $logSummaryCalculator = new LogSummaryCalculator( $this->environment);
         $logSummary = new LogSummaryGetter($environment, $logSummaryRepo, $logSummaryCalculator);
 
         $response = $this->setContent($levels, $logSummary->__invoke());

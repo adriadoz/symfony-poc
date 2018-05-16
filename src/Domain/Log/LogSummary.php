@@ -7,43 +7,48 @@ namespace G3\FrameworkPractice\Domain\Log;
 final class LogSummary
 {
     private $logEntries;
+    private $summary;
 
-    public function __construct(LogEntryCollection $content)
-    {
+    public function addCollection(LogEntryCollection $content){
         $this->logEntries = $content;
+    }
+
+    public function addSummary($summary){
+        $this->summary = $summary;
     }
 
     public function __invoke(array $levels): array
     {
-        return $this->logByLevels($levels);
+        if(isset($this->summary)){
+            return $this->summary;
+        }else {
+            $this->logByLevels($levels);
+            return $this->summary;
+        }
     }
 
-    private function logByLevels(array $levels): array
+    private function logByLevels(array $levels): void
     {
-        $summary = [];
+        $this->summary = [];
         foreach ($this->logEntries->items() as $item) {
-            $summary = $this->increaseLogLevels($levels, $item, $summary);
+            $this->increaseLogLevels($levels, $item);
         }
 
-        if (empty($summary)) {
-            return ['No log was found for the selected levels'];
+        if (empty($this->summary)) {
+            throw new \Error('No logs to sum');
         }
-
-        return $summary;
     }
 
-    private function increaseLogLevels(array $levels, LogEntry $item, array $summary): array
+    private function increaseLogLevels(array $levels, LogEntry $item): void
     {
         $level = $item->levelName();
 
         if (in_array($level, $levels) || empty($levels)) {
-            if (array_key_exists($level, $summary)) {
-                $summary[$level] = $summary[$level] + 1;
+            if (array_key_exists($level, $this->summary)) {
+                $this->summary[$level] = $this->summary[$level] + 1;
             } else {
-                $summary[$level] = 1;
+                $this->summary[$level] = 1;
             }
         }
-
-        return $summary;
     }
 }

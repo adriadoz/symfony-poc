@@ -24,10 +24,16 @@ final class LogSummaryGetter
 
     public function __invoke(): LogSummary
     {
-        if(false){
-            return $this->summaryRepository->getLogSummary($this->environment);
-        }else{
+        $inMemory = $this->summaryRepository->getLogSummary($this->environment);
+        if(is_null($inMemory)){
+            echo 'calculated';
+
             return $this->summaryCalculator->__invoke();
+        }else{
+            $logSummary = new LogSummary();
+            $logSummary->addSummary($inMemory);
+            echo 'inmemory';
+            return $logSummary;
         }
     }
 }
