@@ -10,6 +10,7 @@ use Symfony\Component\EventDispatcher\Event;
 
 final class LogEventDispatcher extends Event
 {
+    private const PATH = "../var/log/";
     private $environment;
 
     public function __construct(String $environment)
@@ -28,9 +29,9 @@ final class LogEventDispatcher extends Event
     }
 
     private function updateLogSummaryInMemory(){
-        $logSummaryCalculator = new LogSummaryCalculator($this->environment);
+        $logSummaryCalculator = new LogSummaryCalculator($this->environment, SELF::PATH);
         $logSummary = $logSummaryCalculator->__invoke();
-        $repo = new JsonLogSummaryRepository();
+        $repo = new JsonLogSummaryRepository(SELF::PATH);
         $repo->saveLogSummary($logSummary,  $this->environment);
     }
 }

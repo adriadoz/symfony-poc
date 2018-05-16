@@ -19,23 +19,23 @@ final class LogSummary
 
     public function __invoke(array $levels): array
     {
-        if(isset($this->summary)){
-            return $this->summary;
-        }else {
-            $this->logByLevels($levels);
-            return $this->summary;
-        }
+        $this->logByLevels($levels);
+        return $this->summary;
     }
 
     private function logByLevels(array $levels): void
     {
-        $this->summary = [];
-        foreach ($this->logEntries->items() as $item) {
-            $this->increaseLogLevels($levels, $item);
-        }
+        if(isset($this->summary)){
+            $copy = $this->summary;
+        }else {
+            $this->summary = [];
+            foreach ($this->logEntries->items() as $item) {
+                $this->increaseLogLevels($levels, $item);
+            }
 
-        if (empty($this->summary)) {
-            throw new \Error('No logs to sum');
+            if (empty($this->summary)) {
+                throw new \Error('No logs to sum');
+            }
         }
     }
 
