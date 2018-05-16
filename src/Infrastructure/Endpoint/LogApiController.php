@@ -4,15 +4,16 @@ declare(strict_types = 1);
 
 namespace G3\FrameworkPractice\Infrastructure\Endpoint;
 
-use G3\FrameworkPractice\Application\Log\LogSummaryBuilder;
+use G3\FrameworkPractice\Application\Log\LogSummaryCalculator;
+use G3\FrameworkPractice\Domain\Log\LogSummary;
 use G3\FrameworkPractice\Domain\Log\LogEntry;
 use G3\FrameworkPractice\Domain\Log\Repository\LogRepositoryInterface;
 use G3\FrameworkPractice\Domain\Log\ValueObjects\LogLevelName;
 use G3\FrameworkPractice\Infrastructure\Log\LogEventDispatcher;
 use G3\FrameworkPractice\Infrastructure\Log\LogSummaryGetter;
+use G3\FrameworkPractice\Infrastructure\Repository\JsonLogSummaryRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -35,8 +36,9 @@ final class LogApiController extends Controller
         $this->environment = $environment;
 
         $levels = $this->getFilteredLevel($request);
-
-        $logSummary = new LogSummaryGetter(self::PATH, $environment);
+        $logSummaryRepo = new JsonLogSummaryRepository();
+        $logSummaryCalculator = new LogSummaryCalculator(SELF::PATH, $this->environment);
+        $logSummary = new LogSummaryGetter($environment, $logSummaryRepo, $logSummaryCalculator);
 
         $response = $this->setContent($levels, $logSummary->__invoke());
         $response->headers->set('Content-Type', 'text/html; charset=UTF-8');
@@ -68,7 +70,7 @@ final class LogApiController extends Controller
         return $this->whenTheMethodHasNotBeenImplemented();
     }
 
-    private function setContent(array $levels, LogSummaryBuilder $logSummary): Response
+    private function setContent(array $levels, LogSummary $logSummary): Response
     {
         return $this->render(
             'logSummary.html.twig',
@@ -122,7 +124,7 @@ final class LogApiController extends Controller
         if ($type === $errorType) {
             $this->eventDispatcher->dispatch(
                 'log_record.remotely_added',
-                new LogEventDispatcher()
+                new LogEventDispatcher($this->environment)
             );
         }
     }

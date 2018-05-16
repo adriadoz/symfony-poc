@@ -4,6 +4,8 @@ declare(strict_types = 1);
 
 namespace G3\FrameworkPractice\Infrastructure\Log;
 
+use G3\FrameworkPractice\Application\Log\LogSummaryCalculator;
+use G3\FrameworkPractice\Infrastructure\Repository\JsonLogSummaryRepository;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -32,7 +34,9 @@ final class LogSummaryConsole extends Command
         $environment = $this->getEnvironment($input, $output);
         $levelsRaw   = $this->getLevels($input, $output);
         $levels      = $this->toArray($levelsRaw);
-        $logGetters  = new LogSummaryGetter(self::PATH, $environment);
+        $logSummaryRepo = new JsonLogSummaryRepository();
+        $logSummaryCalculator = new LogSummaryCalculator(SELF::PATH, $environment);
+        $logGetters  = new LogSummaryGetter($environment, $logSummaryRepo, $logSummaryCalculator);
         $logSummary  = $logGetters->__invoke();
 
         $this->print($logSummary->__invoke($levels), $output);
