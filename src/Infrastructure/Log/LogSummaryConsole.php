@@ -39,7 +39,7 @@ final class LogSummaryConsole extends Command
         $logGetters  = new LogSummaryGetter($environment, $logSummaryRepo, $logSummaryCalculator);
         $logSummary  = $logGetters->__invoke();
 
-        $this->print($logSummary->__invoke($levels), $output);
+        $this->print($logSummary->filterByLevels($levels), $output);
     }
 
     private function getEnvironment(InputInterface $input, OutputInterface $output): string
