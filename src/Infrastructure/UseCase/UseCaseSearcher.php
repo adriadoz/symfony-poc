@@ -20,7 +20,7 @@ final class UseCaseSearcher
         $allServicesClass = $this->filterServiceByTag($container);
         dump($allServicesClass);
 
-        return [];
+        return $allServicesClass;
     }
 
     public function filterServiceByTag(ContainerBuilder $builder): array
