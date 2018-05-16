@@ -49,12 +49,11 @@ final class LogSummary
     public function filterByLevels(array $levels)
     {
         $filtered = [];
-        foreach ($this->summary as $item) {
-            var_dump($item);
-            $level = key($item);
-            if (in_array($level, $levels) || empty($levels)) {
-                $filtered[$level] =  $item;
+        while ($level = current($this->summary)) {
+            if (in_array(key($this->summary), $levels) || empty($levels)) {
+                $filtered[key($this->summary)] =  $level;
             }
+            next($this->summary);
         }
         return $filtered;
     }

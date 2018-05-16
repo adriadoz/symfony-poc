@@ -26,12 +26,10 @@ final class LogSummaryGetter
     {
         $inMemory = $this->summaryRepository->getLogSummary($this->environment);
         if(is_null($inMemory)){
-            echo 'calculated';
             return $this->summaryCalculator->__invoke();
         }else{
             $logSummary = new LogSummary();
             $logSummary->addSummary($inMemory);
-            echo 'inmemory';
             return $logSummary;
         }
     }
