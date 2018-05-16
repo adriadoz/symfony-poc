@@ -31,7 +31,7 @@ final class LogSummaryGetter
 
         $logCollection = $this->getLastFiles($finder);
         $logSummary    = new LogSummaryBuilder($logCollection);
-
+        //TODO GET FROM FILE JSON
         return $logSummary;
     }
 

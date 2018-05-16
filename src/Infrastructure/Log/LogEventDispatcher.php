@@ -8,9 +8,16 @@ use Symfony\Component\EventDispatcher\Event;
 
 final class LogEventDispatcher extends Event
 {
+    private $environment;
+
+    public function __construct(String $environment)
+    {
+        $this->environment = $environment;
+    }
 
     public function locallyRaised()
     {
+        var_dump($this->environment);
         echo "Event log_record.locally_raised success!";
     }
 

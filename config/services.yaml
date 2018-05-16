@@ -36,6 +36,7 @@ services:
         class: Monolog\Formatter\JsonFormatter
 
     G3\FrameworkPractice\Infrastructure\Log\LogEventDispatcher:
+        arguments: ['%kernel.environment%']
         tags:
             - { name: kernel.event_listener, event: log_record.locally_raised, method: locallyRaised }
             - { name: kernel.event_listener, event: log_record.remotely_added, method: remotelyAdded }

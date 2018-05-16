@@ -12,6 +12,7 @@ use G3\FrameworkPractice\Infrastructure\Log\LogEventDispatcher;
 use G3\FrameworkPractice\Infrastructure\Log\LogSummaryGetter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 

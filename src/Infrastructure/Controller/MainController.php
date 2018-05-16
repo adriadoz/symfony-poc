@@ -19,6 +19,7 @@ final class MainController extends Controller
     /** @var EventDispatcherInterface */
     private $eventDispatcher;
 
+
     public function __construct(
         string $environment,
         string $environmentName,
