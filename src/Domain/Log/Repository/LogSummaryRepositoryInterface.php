@@ -5,7 +5,7 @@ namespace G3\FrameworkPractice\Domain\Log\Repository;
 
 use G3\FrameworkPractice\Domain\Log\LogSummary;
 
-interface PersistSummaryInterface
+interface LogSummaryRepositoryInterface
 {
     public function saveLogSummary(LogSummary $logSummary);
 }

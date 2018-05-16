@@ -4,9 +4,9 @@ declare(strict_types = 1);
 namespace G3\FrameworkPractice\Infrastructure\Repository;
 
 use G3\FrameworkPractice\Domain\Log\LogSummary;
-use G3\FrameworkPractice\Domain\Log\Repository\PersistSummaryInterface;
+use G3\FrameworkPractice\Domain\Log\Repository\LogSummaryRepositoryInterface;
 
-class JsonPersistSummary implements PersistSummaryInterface
+class JsonLogSummaryRepository implements LogSummaryRepositoryInterface
 {
     private $levels = ['error', 'warning', 'info', 'critical', 'debug'];
     private $encoded;
