@@ -329,6 +329,35 @@ De esta manera podemos inyectar por constructor el EventDispatcher y ahorrarnos 
 Creamos una interficie LogSummaryRepository que define dos métodos a implementar, uno para guardar un LogSummary y otra para leer un logSummary persistido en memoria.
 Hacemos una implementación de esta para guardar en formato JSON los logSummary.
 
+    $this->encoded = json_encode($logSummary->__invoke($this->levels),JSON_PRETTY_PRINT);
+    $fp = fopen($this->path.$environment.'-summary.json', 'w');
+    fwrite($fp, $this->encoded);
+    fclose($fp);
+    
+Y también una para recuperar el logSummary persistido según el entorno:
+
+    if(file_exists ( $this->path.$environment.'-summary.json')){
+        $json = file_get_contents($this->path.$environment.'-summary.json');
+        return json_decode($json, true);
+    }else{
+        return null;
+    }
+            
+ Desde LogSummaryGetter controlaremos si el archivo persistido existe o no, en caso de que no se calculará el logSummary de nuevo.
+ En LogEventDispatcher creamos un solo método que ejecute el método de guardar un logSummary en un fichero JSON cuando se produce uno de los dos eventos, según si ha sido generado de forma remota o local.
+
+###Reemplaza tu EventDispatcher de Symfony por el de Prooph
+Finalmente reemplazamos nuestro EventDispatcher por el de Prooph, lo instalamos con `composer require prooph/service-bus`
+Instanciamos un CommandBus y un CommandRouter, y añadimos un route para que escuche un evento y cree una instancia de LogEventDispatcher.
+
+    $this->eventDispatcher = new CommandBus();
+    $this->router = new CommandRouter();
+    $this->router->route('log_record.locally_raised')->to(new LogEventDispatcher($this->environment));
+    $this->router->attachToMessageBus($this->eventDispatcher);
+
+Donde se añade el log lanzamos el evento:
+
+    $this->eventDispatcher->dispatch('log_record.locally_raised');
 
 ##Sesión 9
 ###Implementa un repositorio de LogSummary que persista en MySQL usando PDO (no Doctrine)
@@ -351,6 +380,9 @@ De la misma manera, cuando se produzca un evento, nuestro distpatcher reconstrui
 Manteniendo la misma lógica anterior, esta vez aprovechamos doctrine y sus configuraciones, para hacer la conexión directa por infección de dependencias, ademas la información de conexión a la base de datos esta mas segura al encontrarse almacenada en .env de nuestro sistema.
 
 Para ejecutar las querys, se utiliza el QueryBuilder de doctrine para DBAL, de manera de mantener el código mas legible, limpio y seguro. 
+
+###Refactoriza tu repositorio para que use Doctrine ORM en vez de Doctrine DBAL 
+
 
 # API Log Examples:
 
