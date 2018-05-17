@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace G3\FrameworkPractice\Infrastructure\Controller;
 
+use Doctrine\DBAL\Connection;
 use G3\FrameworkPractice\Infrastructure\Log\LogEventDispatcher;
 use Prooph\ServiceBus\Plugin\Router\CommandRouter;
 use Psr\Log\LoggerInterface;
@@ -24,14 +25,15 @@ final class MainController extends Controller
     public function __construct(
         string $environment,
         string $environmentName,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        Connection $connection
     ) {
         $this->logger          = $logger;
         $this->environment     = $environment;
         $this->environmentName = $environmentName;
         $this->eventDispatcher = new CommandBus();
         $this->router = new CommandRouter();
-        $this->router->route('log_record.locally_raised')->to(new LogEventDispatcher($this->environment));
+        $this->router->route('log_record.locally_raised')->to(new LogEventDispatcher($this->environment, $connection));
         $this->router->attachToMessageBus($this->eventDispatcher);
     }
 

@@ -12,8 +12,7 @@ use G3\FrameworkPractice\Domain\Log\Repository\LogRepositoryInterface;
 use G3\FrameworkPractice\Domain\Log\ValueObjects\LogLevelName;
 use G3\FrameworkPractice\Infrastructure\Log\LogEventDispatcher;
 use G3\FrameworkPractice\Infrastructure\Log\LogSummaryGetter;
-
-use G3\FrameworkPractice\Infrastructure\Repository\MySQLogSummaryPDORepository;
+use G3\FrameworkPractice\Infrastructure\Repository\MySQLogSummaryDBALRepository;
 use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\Plugin\Router\CommandRouter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -28,15 +27,17 @@ final class LogApiController extends Controller
     private $environment;
     private $eventDispatcher;
     private $router;
+    private $connection;
 
-    public function __construct(LogRepositoryInterface $repository)
+    public function __construct(LogRepositoryInterface $repository, Connection $connection)
     {
         $this->repository      = $repository;
         $this->environment     = 'dev';
         $this->eventDispatcher = new CommandBus();
         $this->router          = new CommandRouter();
-        $this->router->route('log_record.remotely_added')->to(new LogEventDispatcher($this->environment));
+        $this->router->route('log_record.remotely_added')->to(new LogEventDispatcher($this->environment, $connection));
         $this->router->attachToMessageBus($this->eventDispatcher);
+        $this->connection = $connection;
     }
 
     public function read(string $environment, Request $request): Response
@@ -44,8 +45,7 @@ final class LogApiController extends Controller
         $this->environment = $environment;
 
         $levels               = $this->getFilteredLevel($request);
-        $logSummaryRepo       = new MySQLogSummaryPDORepository();
-
+        $logSummaryRepo       = new MySQLogSummaryDBALRepository($this->connection);
         $logSummaryCalculator = new LogSummaryCalculator($this->environment, self::PATH);
         $logSummary           = new LogSummaryGetter($environment, $logSummaryRepo, $logSummaryCalculator);
 
