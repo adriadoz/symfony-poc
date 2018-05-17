@@ -5,24 +5,23 @@ declare(strict_types = 1);
 namespace G3\FrameworkPractice\Infrastructure\Endpoint;
 
 use G3\FrameworkPractice\Application\Log\LogSummaryCalculator;
-use G3\FrameworkPractice\Domain\Log\LogSummary;
 use G3\FrameworkPractice\Domain\Log\LogEntry;
+use G3\FrameworkPractice\Domain\Log\LogSummary;
 use G3\FrameworkPractice\Domain\Log\Repository\LogRepositoryInterface;
 use G3\FrameworkPractice\Domain\Log\ValueObjects\LogLevelName;
 use G3\FrameworkPractice\Infrastructure\Log\LogEventDispatcher;
 use G3\FrameworkPractice\Infrastructure\Log\LogSummaryGetter;
-use G3\FrameworkPractice\Infrastructure\Repository\JsonLogSummaryRepository;
+use G3\FrameworkPractice\Infrastructure\Repository\MySQLogSummaryRepository;
+use Prooph\ServiceBus\CommandBus;
+use Prooph\ServiceBus\Plugin\Router\CommandRouter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Prooph\ServiceBus\Plugin\Router\CommandRouter;
-use Prooph\ServiceBus\CommandBus;
 
 final class LogApiController extends Controller
 {
     private const CHANNEL = "external";
-    private const PATH = "../var/log/";
+    private const PATH    = "../var/log/";
     private $repository;
     private $environment;
     private $eventDispatcher;
@@ -31,9 +30,9 @@ final class LogApiController extends Controller
     public function __construct(LogRepositoryInterface $repository)
     {
         $this->repository      = $repository;
-        $this->environment = 'dev';
+        $this->environment     = 'dev';
         $this->eventDispatcher = new CommandBus();
-        $this->router = new CommandRouter();
+        $this->router          = new CommandRouter();
         $this->router->route('log_record.remotely_added')->to(new LogEventDispatcher($this->environment));
         $this->router->attachToMessageBus($this->eventDispatcher);
     }
@@ -42,10 +41,10 @@ final class LogApiController extends Controller
     {
         $this->environment = $environment;
 
-        $levels = $this->getFilteredLevel($request);
-        $logSummaryRepo = new JsonLogSummaryRepository(SELF::PATH);
-        $logSummaryCalculator = new LogSummaryCalculator( $this->environment, SELF::PATH);
-        $logSummary = new LogSummaryGetter($environment, $logSummaryRepo, $logSummaryCalculator);
+        $levels               = $this->getFilteredLevel($request);
+        $logSummaryRepo       = new MySQLogSummaryRepository();
+        $logSummaryCalculator = new LogSummaryCalculator($this->environment, self::PATH);
+        $logSummary           = new LogSummaryGetter($environment, $logSummaryRepo, $logSummaryCalculator);
 
         $response = $this->setContent($levels, $logSummary->__invoke());
         $response->headers->set('Content-Type', 'text/html; charset=UTF-8');

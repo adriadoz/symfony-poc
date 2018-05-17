@@ -5,7 +5,7 @@ declare(strict_types = 1);
 namespace G3\FrameworkPractice\Infrastructure\Log;
 
 use G3\FrameworkPractice\Application\Log\LogSummaryCalculator;
-use G3\FrameworkPractice\Infrastructure\Repository\JsonLogSummaryRepository;
+use G3\FrameworkPractice\Infrastructure\Repository\MySQLogSummaryRepository;
 
 final class LogEventDispatcher
 {
@@ -21,7 +21,7 @@ final class LogEventDispatcher
     {
         $logSummaryCalculator = new LogSummaryCalculator($this->environment, self::PATH);
         $logSummary           = $logSummaryCalculator->__invoke();
-        $repo                 = new JsonLogSummaryRepository(self::PATH);
+        $repo                 = new MySQLogSummaryRepository();
         $repo->saveLogSummary($logSummary, $this->environment);
     }
 }
