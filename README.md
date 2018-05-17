@@ -383,6 +383,22 @@ Para ejecutar las querys, se utiliza el QueryBuilder de doctrine para DBAL, de m
 
 ###Refactoriza tu repositorio para que use Doctrine ORM en vez de Doctrine DBAL 
 
+Se instancia EntityManagerInterface, para persistir la clase en base de datos.
+
+Primero se crea una nueva entidad en Infrastructure/Doctrine/Entity/LogSummaryEntry y con anotaciones ORM se indica la clase de entidad y su base de datos, luego se mapean los campos hacia la base de datos.
+
+Para asegurarnos que la base de datos esta actualizada con nuestra entidad se ejecuta el comando de doctrine **php bin/console doctrine:schema:validate**
+
+Se sigue la lógica de los demás repositorios para obtener o almacenar los datos, en el caso de doctrine, se aprovecha el EntityManager inyectado para persistir en la base de datos con el siguiente comando
+
+    $logSummaryEntry = new LogSummaryEntry($levels, $total, $environment);
+    
+    $this->em->persist($logSummaryEntry);
+    $this->em->flush();
+    
+En la primera linea, se instancia la entidad y a continuación se persiste y envia.
+
+
 
 # API Log Examples:
 
