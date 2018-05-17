@@ -31,7 +31,7 @@ final class LogApiController extends Controller
     public function __construct(LogRepositoryInterface $repository)
     {
         $this->repository      = $repository;
-        $this->environment = 'DEV';
+        $this->environment = 'dev';
         $this->eventDispatcher = new CommandBus();
         $this->router = new CommandRouter();
         $this->router->route('log_record.remotely_added')->to(new LogEventDispatcher($this->environment));
