@@ -52,7 +52,7 @@ llamar a http://localhost:8000 para mostrar en nombre custom del environment o h
 Con los entornos _prod_ y _dev_ ya configurados, se agregan en sus respectivas carpetas `config/packages/dev` y `config/packages/prod` un archivo llamado `parameters.yaml` encargado de gestionar los parámetros de nombre para cada entorno `ganianes_dev`y `not_fail` los cuales, luego son enviados al controlador por la inyección de servicios desde `config/services.yaml` argumentando los parámetros del constructor de la siguiente manera.
 
 	App\Controller\MainController:
-	        arguments: ['%kernel.environment%', '%environment.name%']
+			arguments: ['%kernel.environment%', '%environment.name%']
 
 Donde, el primer argumento, captura el entorno actual del usuario y el segundo, el nombre personalizado de ese entorno. Para acceder al nombre personalizado, se puede hacer a travez del método `showHelloCustom` en el controlador `MainController` desde la ruta [http://localhost:8000/custom][4]
 
@@ -72,7 +72,7 @@ Luego se crea un evento de warning al ejecutar el método principal de saludo.
 Se gestiona mostrar un error en caso de que exista un parametro get `?bum`  en la url, el cual no contengo información.
 
 	if ($request->query->has('bum')) {
-	    $this->logger->error('ErrorLogger');
+		$this->logger->error('ErrorLogger');
 	}
 
 Luego se crea un filtro en `config/packages/prod/monolog.yaml` para guardar los logs, solo cuando se produzca un error.
@@ -101,10 +101,10 @@ La consola, es una clase que extiende de Command y pese a no exigir, requiere do
 
 Para el Hello World, se utiliza la siguiente configuración
 
-	    $this
-	        ->setName('message:hello')
-	        ->setDescription('Hello World')
-	        ->setHelp('say Hello World. . .');
+		$this
+			->setName('message:hello')
+			->setDescription('Hello World')
+			->setHelp('say Hello World. . .');
 
 Y `protected function execute(InputInterface $input, OutputInterface $output)` 
 
@@ -138,10 +138,10 @@ En los métodos `print` y `printSummary` se verificarán que los errores a mostr
 
 Haciendo uso de `use Symfony\Component\Console\Question\Question` le preguntamos al usuario los datos que no ha introducido.
 
-	    `if(empty($enteredEnvironment)){
-	         $question = new Question('Please enter a environment to show: ', 'dev');
-	         $enteredEnvironment = $helper->ask($input, $output, $question);
-	     }`
+		`if(empty($enteredEnvironment)){
+			 $question = new Question('Please enter a environment to show: ', 'dev');
+			 $enteredEnvironment = $helper->ask($input, $output, $question);
+		 }`
 
 En el método `execute` comprobamos si el argumento está vacio, y en caso afirmativo preguntamos al usuario que especifique el entorno.
 
@@ -162,16 +162,16 @@ Cuando se desactiva `autowire: false`, las inyección de constructores, deben se
 ### Reactivar el flag de autoconfigure
 Cuando se activa `autoconfigure: true` podemos eliminar los tags:
 
-        tags: - { 
-                    name: 'console.command', 
-                    command: 'log:summary' 
-                 }
+		tags: - { 
+					name: 'console.command', 
+					command: 'log:summary' 
+				 }
 
 Cuando se activa `autowire: true` podemos eliminar la inyección del servicio:
 
-        arguments: 
-                -$sayMessage: 
-                            '@G3\FrameworkPractice\Application\MessageCommand\SayHello'`
+		arguments: 
+				-$sayMessage: 
+							'@G3\FrameworkPractice\Application\MessageCommand\SayHello'`
 
 ### Implementar un servicio que recibe todos los casos de uso definidos en la app
 Creamos la clase `UseCaseSearcherConsole` que recibe un array de las instancias de servicios.
@@ -181,14 +181,14 @@ Para finalizar lo haremos de forma dinámica usando el compiler pass.
 ##Sesión 6 - Routing API HTTP
 ###Implementar un HTTP endpoint que devuelva los logs en formato JSON
 Se añade una nueva ruta en yaml para que /logs devuelva los logs en formato JSON
-         
-         log_api
-        - path: /logs
-        - controller: G3\FrameworkPractice\Infrastructure\Controller\LogApiController::__invoke
-        - methods: [GET]
+		 
+		 log_api
+		- path: /logs
+		- controller: G3\FrameworkPractice\Infrastructure\Controller\LogApiController::__invoke
+		- methods: [GET]
 
 A continuación implementamos la ruta usando annotations añadiendo un comentario en el controlador:
-     ` @Route("/logs", name="log_api") @Method({"GET"})`
+	 ` @Route("/logs", name="log_api") @Method({"GET"})`
  
 Filtramos todos los métodos que no sean GET llamando al método del controlador `LogApiController` que devuelve un 405.
 Cambiamos la ruta de la API a `log-summaries` indicando el entorno `/dev` y permitiendo filtrar mediante un parámetro en la misma URL.
@@ -201,10 +201,29 @@ donde el parámetro `type` marca el tipo de error y `message` el mensaje de erro
 
 ###Cachear las peticiones tipo GET durante 30 segundos
 Haremos uso de `CacheKernel` para setear en el header de la respuesta a 30 segundos el tiempo máximo válido:
-        
-        $kernel = new CacheKernel($kernel);
-        $response->setSharedMaxAge(30);
-        
+		
+		$kernel = new CacheKernel($kernel);
+		$response->setSharedMaxAge(30);
+
+###Implementa un repositorio de LogSummary que persista en MySQL usando PDO (no Doctrine)
+Se crea una clase, en Infrastructure/Repository/ llamada MySQLogSummaryPDORepository.php la cual esta encargada
+de realizar una conexión manual hacia la base de datos MySQL montada en vagrant. Esta clase implementa de LogSummaryRepositoryInterface, luego se encarga de realizar las peticiones correspondiente y almacenarlas en MySQL.
+
+Con PDO los valores se parametrizan para evitar inyección  SQL.
+
+La conexión a la base de datos, se realiza al momento de instancia la clase por su constructor, este contiene los datos de conexión.
+
+Antes de ejecutar una query, se prepara con el método onPrepare que devuelve un Statement por el cual podremos bandera los parámetros antes de realizar la consulta.
+
+###Cambia la implementación del repositorio de LogSummary que se inyecta en el endpoint GET /, es decir el listado de LogSummary en HTML por la implementación con PDO
+En ApiController y MainController, la instancia de JsonLogSummaryRepository, cambia a MySQLPDORepository, ahora al llamar a /log-summary/{environment} desde el get de nuestra url, realizara la búsqueda desde la base de datos, en caso de no contener información este recalcara el historial de log.
+
+De la misma manera, cuando se produzca un evento, nuestro distpatcher reconstruirá el LogSummary persistiendo en la base de datos.
+
+###Refactoriza tu repositorio para que use Doctrine DBAL en vez de PDO
+Manteniendo la misma lógica anterior, esta vez aprovechamos doctrine y sus configuraciones, para hacer la conexión directa por infección de dependencias, ademas la información de conexión a la base de datos esta mas segura al encontrarse almacenada en .env de nuestro sistema.
+
+Para ejecutar las querys, se utiliza el QueryBuilder de doctrine para DBAL, de manera de mantener el código mas legible, limpio y seguro. 
 
 # API Log Examples:
 
