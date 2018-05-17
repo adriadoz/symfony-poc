@@ -247,7 +247,24 @@ Y en el cuerpo se muestra el listado de número de eventos usando un iterador `f
         </tr>
     {% endfor %}
 
+###Hacer 2 ficheros de estilos CSS. Uno con un estilo simple para listados, y otro para el estilo del header. Incluid estos dos ficheros desde vuestra plantilla
+Se incluyen dos ficheros css en la plantilla de Twig `logSummary.html.twig`:
+    
+    <link rel="stylesheet" type="text/css" href="../css/header.css">
+    <link rel="stylesheet" type="text/css" href="../css/summary.css">
 
+###Usad WebPack Encore para unificar los 2 CSS en un único fichero app.css
+Primero de todo instalamos encore y yarn:
+
+         composer require encore
+         yarn install
+
+A continuación importamos nuestros ficheros `scss` en `app.js`, de esta manera cuando ejecutemos `yarn run dev` nos generará un solo archivo css en la carpeta `public/build`.
+Y para terminar modificamos la importación en nuestra plantilla Twig, tal que así:
+
+    <link rel="stylesheet" type="text/css" href="{{ asset('build/app.css')}}">
+
+##Sesión 9
 ###Implementa un repositorio de LogSummary que persista en MySQL usando PDO (no Doctrine)
 Se crea una clase, en Infrastructure/Repository/ llamada MySQLogSummaryPDORepository.php la cual esta encargada
 de realizar una conexión manual hacia la base de datos MySQL montada en vagrant. Esta clase implementa de LogSummaryRepositoryInterface, luego se encarga de realizar las peticiones correspondiente y almacenarlas en MySQL.
