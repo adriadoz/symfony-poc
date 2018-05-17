@@ -31,13 +31,13 @@ final class LogSummaryConsole extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): void
     {
-        $environment = $this->getEnvironment($input, $output);
-        $levelsRaw   = $this->getLevels($input, $output);
-        $levels      = $this->toArray($levelsRaw);
-        $logSummaryRepo = new JsonLogSummaryRepository(SELF::PATH);
+        $environment          = $this->getEnvironment($input, $output);
+        $levelsRaw            = $this->getLevels($input, $output);
+        $levels               = $this->toArray($levelsRaw);
+        $logSummaryRepo       = new JsonLogSummaryRepository(SELF::PATH);
         $logSummaryCalculator = new LogSummaryCalculator($environment, SELF::PATH);
-        $logGetters  = new LogSummaryGetter($environment, $logSummaryRepo, $logSummaryCalculator);
-        $logSummary  = $logGetters->__invoke();
+        $logGetters           = new LogSummaryGetter($environment, $logSummaryRepo, $logSummaryCalculator);
+        $logSummary           = $logGetters->__invoke();
         $this->print($logSummary->filterByLevels($levels), $output);
     }
 

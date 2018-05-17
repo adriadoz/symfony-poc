@@ -17,11 +17,11 @@ final class LogEventDispatcher
         $this->environment = $environment;
     }
 
-    public function __invoke(){
-        echo 'hola';
-        $logSummaryCalculator = new LogSummaryCalculator($this->environment, SELF::PATH);
-        $logSummary = $logSummaryCalculator->__invoke();
-        $repo = new JsonLogSummaryRepository(SELF::PATH);
-        $repo->saveLogSummary($logSummary,  $this->environment);
+    public function __invoke()
+    {
+        $logSummaryCalculator = new LogSummaryCalculator($this->environment, self::PATH);
+        $logSummary           = $logSummaryCalculator->__invoke();
+        $repo                 = new JsonLogSummaryRepository(self::PATH);
+        $repo->saveLogSummary($logSummary, $this->environment);
     }
 }

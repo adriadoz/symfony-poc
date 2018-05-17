@@ -8,16 +8,18 @@ use G3\FrameworkPractice\Application\Log\LogSummaryCalculator;
 use G3\FrameworkPractice\Domain\Log\LogSummary;
 use G3\FrameworkPractice\Domain\Log\Repository\LogSummaryRepositoryInterface;
 
-
 final class LogSummaryGetter
 {
     private $environment;
     private $summaryRepository;
     private $summaryCalculator;
 
-    public function __construct( string $environment, LogSummaryRepositoryInterface $summaryRepository, LogSummaryCalculator $summaryCalculator)
-    {
-        $this->environment = $environment;
+    public function __construct(
+        string $environment,
+        LogSummaryRepositoryInterface $summaryRepository,
+        LogSummaryCalculator $summaryCalculator
+    ) {
+        $this->environment       = $environment;
         $this->summaryRepository = $summaryRepository;
         $this->summaryCalculator = $summaryCalculator;
     }
@@ -25,11 +27,12 @@ final class LogSummaryGetter
     public function __invoke(): LogSummary
     {
         $inMemory = $this->summaryRepository->getLogSummary($this->environment);
-        if(is_null($inMemory)){
+        if (is_null($inMemory)) {
             return $this->summaryCalculator->__invoke();
-        }else{
+        } else {
             $logSummary = new LogSummary();
             $logSummary->addSummary($inMemory);
+
             return $logSummary;
         }
     }
