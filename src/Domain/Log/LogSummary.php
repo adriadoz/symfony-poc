@@ -65,6 +65,7 @@ final class LogSummary
     public function filterByLevels(array $levels)
     {
         $filtered = [];
+        reset($this->summaryAsArray);
         while ($level = current($this->summaryAsArray)) {
             if (in_array(key($this->summaryAsArray), $levels) || empty($levels)) {
                 $filtered[key($this->summaryAsArray)] =  $level;
@@ -76,6 +77,7 @@ final class LogSummary
 
     private function getSummaryInVariables()
     {
+        reset($this->summaryAsArray);
         while ($level = current($this->summaryAsArray)) {
             switch(key($this->summaryAsArray)){
                 case "INFO":

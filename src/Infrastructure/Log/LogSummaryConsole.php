@@ -38,7 +38,6 @@ final class LogSummaryConsole extends Command
         $logSummaryCalculator = new LogSummaryCalculator($environment, SELF::PATH);
         $logGetters  = new LogSummaryGetter($environment, $logSummaryRepo, $logSummaryCalculator);
         $logSummary  = $logGetters->__invoke();
-
         $this->print($logSummary->filterByLevels($levels), $output);
     }
 
