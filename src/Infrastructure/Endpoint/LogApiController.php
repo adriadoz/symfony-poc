@@ -6,6 +6,7 @@ namespace G3\FrameworkPractice\Infrastructure\Endpoint;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use G3\FrameworkPractice\Application\Log\LogSummaryCalculator;
 use G3\FrameworkPractice\Domain\Log\LogEntry;
 use G3\FrameworkPractice\Domain\Log\LogSummary;
@@ -32,16 +33,16 @@ final class LogApiController extends Controller
     private $connection;
     private $entityManager;
 
-    public function __construct(LogRepositoryInterface $repository, Connection $connection, EntityManager $entitymanager)
+    public function __construct(LogRepositoryInterface $repository, Connection $connection, EntityManagerInterface $entityManager)
     {
         $this->repository      = $repository;
         $this->environment     = 'dev';
         $this->eventDispatcher = new CommandBus();
         $this->router          = new CommandRouter();
-        $this->router->route('log_record.remotely_added')->to(new LogEventDispatcher($this->environment, $connection));
+        $this->router->route('log_record.remotely_added')->to(new LogEventDispatcher($this->environment, $connection, $entityManager));
         $this->router->attachToMessageBus($this->eventDispatcher);
         $this->connection    = $connection;
-        $this->entityManager = $entitymanager;
+        $this->entityManager = $entityManager;
     }
 
     public function read(string $environment, Request $request): Response

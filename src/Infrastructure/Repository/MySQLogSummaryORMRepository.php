@@ -7,6 +7,7 @@ namespace G3\FrameworkPractice\Infrastructure\Repository;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Error;
 use G3\FrameworkPractice\Domain\Log\LogSummary;
 use G3\FrameworkPractice\Domain\Log\Repository\LogSummaryRepositoryInterface;
@@ -18,7 +19,7 @@ final class MySQLogSummaryORMRepository implements LogSummaryRepositoryInterface
     private $em;
     private $connection;
 
-    public function __construct(Connection $connection, EntityManager $em)
+    public function __construct(Connection $connection, EntityManagerInterface $em)
     {
         $this->connection = $connection;
         $this->em = $em;
