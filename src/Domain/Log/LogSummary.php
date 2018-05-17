@@ -7,31 +7,47 @@ namespace G3\FrameworkPractice\Domain\Log;
 final class LogSummary
 {
     private $logEntries;
-    private $summary;
+    private $summaryAsArray;
+    private $info;
+    private $critical;
+    private $warning;
+    private $error;
+    private $debug;
+
+    public function __construct()
+    {
+        $this->info =  0;
+        $this->critical = 0;
+        $this->warning = 0;
+        $this->error = 0;
+        $this->debug = 0;
+    }
 
     public function addCollection(LogEntryCollection $content){
         $this->logEntries = $content;
         $this->processCollection();
+        $this->getSummaryInVariables();
     }
 
     public function addSummary($summary){
-        $this->summary = $summary;
+        $this->summaryAsArray = $summary;
+        $this->getSummaryInVariables();
     }
 
     public function __invoke(array $levels): array
     {
-        return $this->summary;
+        return $this->summaryAsArray;
 
     }
 
     private function processCollection(): void
     {
-        $this->summary = [];
+        $this->summaryAsArray = [];
         foreach ($this->logEntries->items() as $item) {
             $this->increaseLogLevels($item);
         }
 
-        if (empty($this->summary)) {
+        if (empty($this->summaryAsArray)) {
             throw new \Error('No logs to sum');
         }
     }
@@ -39,22 +55,67 @@ final class LogSummary
     private function increaseLogLevels(LogEntry $item): void
     {
         $level = $item->levelName();
-        if (array_key_exists($level, $this->summary)) {
-            $this->summary[$level] = $this->summary[$level] + 1;
+        if (array_key_exists($level, $this->summaryAsArray)) {
+            $this->summaryAsArray[$level] = $this->summaryAsArray[$level] + 1;
         } else {
-            $this->summary[$level] = 1;
+            $this->summaryAsArray[$level] = 1;
         }
     }
 
     public function filterByLevels(array $levels)
     {
         $filtered = [];
-        while ($level = current($this->summary)) {
-            if (in_array(key($this->summary), $levels) || empty($levels)) {
-                $filtered[key($this->summary)] =  $level;
+        while ($level = current($this->summaryAsArray)) {
+            if (in_array(key($this->summaryAsArray), $levels) || empty($levels)) {
+                $filtered[key($this->summaryAsArray)] =  $level;
             }
-            next($this->summary);
+            next($this->summaryAsArray);
         }
         return $filtered;
+    }
+
+    private function getSummaryInVariables()
+    {
+        while ($level = current($this->summaryAsArray)) {
+            switch(key($this->summaryAsArray)){
+                case "INFO":
+                    $this->info = $level;
+                    break;
+                case "CRITICAL":
+                    $this->critical = $level;
+                    break;
+                case "WARNING":
+                    $this->warning = $level;
+                    break;
+                case "ERROR":
+                    $this->error = $level;
+                    break;
+                case "DEBUG":
+                    $this->debug = $level;
+                    break;
+            }
+            next($this->summaryAsArray);
+        }
+    }
+
+    public function getInfo():int
+    {
+        return $this->info;
+    }
+    public function getCritical():int
+    {
+        return $this->critical;
+    }
+    public function getWarning():int
+    {
+        return $this->warning;
+    }
+    public function getError():int
+    {
+        return $this->error;
+    }
+    public function getDebug():int
+    {
+        return $this->debug;
     }
 }

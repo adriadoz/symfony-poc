@@ -16,6 +16,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Prooph\ServiceBus\Plugin\Router\CommandRouter;
+use Prooph\ServiceBus\CommandBus;
 
 final class LogApiController extends Controller
 {
@@ -24,11 +26,16 @@ final class LogApiController extends Controller
     private $repository;
     private $environment;
     private $eventDispatcher;
+    private $router;
 
-    public function __construct(LogRepositoryInterface $repository, EventDispatcherInterface $eventDispatcher)
+    public function __construct(LogRepositoryInterface $repository)
     {
         $this->repository      = $repository;
-        $this->eventDispatcher = $eventDispatcher;
+        $this->environment = 'DEV';
+        $this->eventDispatcher = new CommandBus();
+        $this->router = new CommandRouter();
+        $this->router->route('log_record.remotely_added')->to(new LogEventDispatcher($this->environment));
+        $this->router->attachToMessageBus($this->eventDispatcher);
     }
 
     public function read(string $environment, Request $request): Response
@@ -122,10 +129,7 @@ final class LogApiController extends Controller
         $errorType = LogLevelName::Error();
 
         if ($type === $errorType) {
-            $this->eventDispatcher->dispatch(
-                'log_record.remotely_added',
-                new LogEventDispatcher($this->environment)
-            );
+            $this->eventDispatcher->dispatch('log_record.remotely_added');
         }
     }
 }
