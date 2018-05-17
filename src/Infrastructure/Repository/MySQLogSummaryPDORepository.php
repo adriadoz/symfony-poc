@@ -48,11 +48,6 @@ final class MySQLogSummaryPDORepository implements LogSummaryRepositoryInterface
         return null;
     }
 
-    private function onPrepare($query): PDOStatement
-    {
-        return $this->db_connect->prepare($query);
-    }
-
     public function insertLog(string $levels, int $total, string $environment): void
     {
         $query = "INSERT INTO log_summary (level, total, environment) VALUES (:level, :total, :environment)";
@@ -63,6 +58,11 @@ final class MySQLogSummaryPDORepository implements LogSummaryRepositoryInterface
         $stmt->bindParam(':environment', $environment, PDO::PARAM_STR);
 
         $stmt->execute();
+    }
+
+    private function onPrepare($query): PDOStatement
+    {
+        return $this->db_connect->prepare($query);
     }
 
     private function selectSummaryOnDatabase(string $environment): array

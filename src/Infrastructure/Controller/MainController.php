@@ -6,13 +6,12 @@ namespace G3\FrameworkPractice\Infrastructure\Controller;
 
 use Doctrine\DBAL\Connection;
 use G3\FrameworkPractice\Infrastructure\Log\LogEventDispatcher;
+use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\Plugin\Router\CommandRouter;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Prooph\ServiceBus\CommandBus;
-
 
 final class MainController extends Controller
 {
@@ -32,7 +31,7 @@ final class MainController extends Controller
         $this->environment     = $environment;
         $this->environmentName = $environmentName;
         $this->eventDispatcher = new CommandBus();
-        $this->router = new CommandRouter();
+        $this->router          = new CommandRouter();
         $this->router->route('log_record.locally_raised')->to(new LogEventDispatcher($this->environment, $connection));
         $this->router->attachToMessageBus($this->eventDispatcher);
     }

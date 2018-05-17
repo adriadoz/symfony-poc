@@ -19,18 +19,19 @@ class JsonLogSummaryRepository implements LogSummaryRepositoryInterface
 
     public function saveLogSummary(LogSummary $logSummary, String $environment)
     {
-        $this->encoded = json_encode($logSummary->__invoke($this->levels),JSON_PRETTY_PRINT);
-        $fp = fopen($this->path.$environment.'-summary.json', 'w');
+        $this->encoded = json_encode($logSummary->__invoke($this->levels), JSON_PRETTY_PRINT);
+        $fp            = fopen($this->path . $environment . '-summary.json', 'w');
         fwrite($fp, $this->encoded);
         fclose($fp);
     }
 
     public function getLogSummary(String $environment)
     {
-        if(file_exists ( $this->path.$environment.'-summary.json')){
-            $json = file_get_contents($this->path.$environment.'-summary.json');
+        if (file_exists($this->path . $environment . '-summary.json')) {
+            $json = file_get_contents($this->path . $environment . '-summary.json');
+
             return json_decode($json, true);
-        }else{
+        } else {
             return null;
         }
     }

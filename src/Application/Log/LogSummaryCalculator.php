@@ -3,15 +3,14 @@ declare(strict_types = 1);
 
 namespace G3\FrameworkPractice\Application\Log;
 
-
+use G3\FrameworkPractice\Domain\Log\LogEntry;
 use G3\FrameworkPractice\Domain\Log\LogEntryCollection;
 use G3\FrameworkPractice\Domain\Log\LogSummary;
+use Symfony\Component\Finder\Finder;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\NameConverter\CamelCaseToSnakeCaseNameConverter;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
-use G3\FrameworkPractice\Domain\Log\LogEntry;
-use Symfony\Component\Finder\Finder;
 
 final class LogSummaryCalculator
 {
@@ -21,7 +20,7 @@ final class LogSummaryCalculator
     public function __construct(string $environment, string $path)
     {
         $this->environment = $environment;
-        $this->path = $path;
+        $this->path        = $path;
     }
 
     public function __invoke(): LogSummary
@@ -32,6 +31,7 @@ final class LogSummaryCalculator
         $logCollection = $this->getLastFiles($finder);
         $logSummary    = new LogSummary();
         $logSummary->addCollection($logCollection);
+
         return $logSummary;
     }
 

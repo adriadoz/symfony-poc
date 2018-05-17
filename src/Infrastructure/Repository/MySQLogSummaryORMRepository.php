@@ -6,7 +6,6 @@ namespace G3\FrameworkPractice\Infrastructure\Repository;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DBALException;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Error;
 use G3\FrameworkPractice\Domain\Log\LogSummary;
@@ -22,7 +21,7 @@ final class MySQLogSummaryORMRepository implements LogSummaryRepositoryInterface
     public function __construct(Connection $connection, EntityManagerInterface $em)
     {
         $this->connection = $connection;
-        $this->em = $em;
+        $this->em         = $em;
     }
 
     public function saveLogSummary(LogSummary $logSummary, String $environment)
@@ -52,17 +51,16 @@ final class MySQLogSummaryORMRepository implements LogSummaryRepositoryInterface
         return null;
     }
 
-    private function selectSummaryOnDatabase(string $environment): array
-    {
-
-    }
-
     public function insertLog(string $levels, int $total, string $environment): void
     {
         $logSummaryEntry = new LogSummaryEntry($levels, $total, $environment);
 
         $this->em->persist($logSummaryEntry);
         $this->em->flush();
+    }
+
+    private function selectSummaryOnDatabase(string $environment): array
+    {
     }
 
     private function truncateTable(): void

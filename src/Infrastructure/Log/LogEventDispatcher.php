@@ -18,8 +18,8 @@ final class LogEventDispatcher
 
     public function __construct(String $environment, Connection $connection, EntityManagerInterface $entityManager)
     {
-        $this->environment = $environment;
-        $this->connection = $connection;
+        $this->environment   = $environment;
+        $this->connection    = $connection;
         $this->entityManager = $entityManager;
     }
 

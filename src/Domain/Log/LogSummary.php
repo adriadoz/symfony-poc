@@ -16,20 +16,22 @@ final class LogSummary
 
     public function __construct()
     {
-        $this->info =  0;
+        $this->info     = 0;
         $this->critical = 0;
-        $this->warning = 0;
-        $this->error = 0;
-        $this->debug = 0;
+        $this->warning  = 0;
+        $this->error    = 0;
+        $this->debug    = 0;
     }
 
-    public function addCollection(LogEntryCollection $content){
+    public function addCollection(LogEntryCollection $content)
+    {
         $this->logEntries = $content;
         $this->processCollection();
         $this->getSummaryInVariables();
     }
 
-    public function addSummary($summary){
+    public function addSummary($summary)
+    {
         $this->summaryAsArray = $summary;
         $this->getSummaryInVariables();
     }
@@ -37,7 +39,45 @@ final class LogSummary
     public function __invoke(array $levels): array
     {
         return $this->summaryAsArray;
+    }
 
+    public function filterByLevels(array $levels)
+    {
+        $filtered = [];
+        reset($this->summaryAsArray);
+        while ($level = current($this->summaryAsArray)) {
+            if (in_array(key($this->summaryAsArray), $levels) || empty($levels)) {
+                $filtered[key($this->summaryAsArray)] = $level;
+            }
+            next($this->summaryAsArray);
+        }
+
+        return $filtered;
+    }
+
+    public function getInfo(): int
+    {
+        return $this->info;
+    }
+
+    public function getCritical(): int
+    {
+        return $this->critical;
+    }
+
+    public function getWarning(): int
+    {
+        return $this->warning;
+    }
+
+    public function getError(): int
+    {
+        return $this->error;
+    }
+
+    public function getDebug(): int
+    {
+        return $this->debug;
     }
 
     private function processCollection(): void
@@ -62,24 +102,11 @@ final class LogSummary
         }
     }
 
-    public function filterByLevels(array $levels)
-    {
-        $filtered = [];
-        reset($this->summaryAsArray);
-        while ($level = current($this->summaryAsArray)) {
-            if (in_array(key($this->summaryAsArray), $levels) || empty($levels)) {
-                $filtered[key($this->summaryAsArray)] =  $level;
-            }
-            next($this->summaryAsArray);
-        }
-        return $filtered;
-    }
-
     private function getSummaryInVariables()
     {
         reset($this->summaryAsArray);
         while ($level = current($this->summaryAsArray)) {
-            switch(key($this->summaryAsArray)){
+            switch (key($this->summaryAsArray)) {
                 case "INFO":
                     $this->info = $level;
                     break;
@@ -98,26 +125,5 @@ final class LogSummary
             }
             next($this->summaryAsArray);
         }
-    }
-
-    public function getInfo():int
-    {
-        return $this->info;
-    }
-    public function getCritical():int
-    {
-        return $this->critical;
-    }
-    public function getWarning():int
-    {
-        return $this->warning;
-    }
-    public function getError():int
-    {
-        return $this->error;
-    }
-    public function getDebug():int
-    {
-        return $this->debug;
     }
 }
