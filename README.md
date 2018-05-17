@@ -2,8 +2,8 @@
 
 El equipo consta de 2 integrantes:
  
- - Adrià
- - Mario
+ - Adrià Velardos Palomar
+ - Mario Hidalgo García
 
 ## Sesión 1
 ### Requerimiento: Instalación de Symfony 4.0.9
@@ -205,6 +205,49 @@ Haremos uso de `CacheKernel` para setear en el header de la respuesta a 30 segun
 		$kernel = new CacheKernel($kernel);
 		$response->setSharedMaxAge(30);
 
+##Sesión 7
+###Incluir Twig en el proyecto
+Se instala el sistema de templates al proyecto mediante `composer require "twig/twig:^2.0"`. 
+Creamos una nueva carpeta llamada templates donde estaran las plantillas del proyecto. En el archivo de configuración `twig.yaml` seteamos la carpeta templates:
+
+        twig:
+            paths: ['%kernel.project_dir%/templates']
+            debug: '%kernel.debug%'
+            strict_variables: '%kernel.debug%'
+
+###Hacer un controlador web que dé respuesta a GET / y devuelva en HTML básico usando Twig
+Añadimos el método `read` para dar respuesta a peticiones GET en nuestro controlador LogApiController, y lo añadimos al archivo de configuración de rutas `log_api.yaml` tal que así:
+
+        log_api:
+            path: /log-summaries/{environment}
+            defaults:
+                environment: dev
+            controller: G3\FrameworkPractice\Infrastructure\Endpoint\LogApiController::read
+            methods: [GET]
+
+Devolvemos el HTML a partir de la plantilla indicada en el primer parámetro de render y a continuación se añaden los datos a printar, tal que así:
+
+        return $this->render(
+            'logSummary.html.twig',
+            [
+              'environment' => $this->environment,
+              'logs'        => json_decode($logApiBuilder->logSummary(), true),
+            ]
+        );
+En nuestra plantilla mostraremos en el header el nombre del grupo y el entorno que se está consultando:
+
+    <h1 class="display-5">LogSummary from Team 3 and environment: {{ environment }}</h1>
+    
+Y en el cuerpo se muestra el listado de número de eventos usando un iterador `for` de Twig:
+
+    {% for key,log in logs %}
+        <tr>
+            <td>{{ key }}</td>
+            <td>{{ log }}</td>
+        </tr>
+    {% endfor %}
+
+
 ###Implementa un repositorio de LogSummary que persista en MySQL usando PDO (no Doctrine)
 Se crea una clase, en Infrastructure/Repository/ llamada MySQLogSummaryPDORepository.php la cual esta encargada
 de realizar una conexión manual hacia la base de datos MySQL montada en vagrant. Esta clase implementa de LogSummaryRepositoryInterface, luego se encarga de realizar las peticiones correspondiente y almacenarlas en MySQL.
@@ -214,6 +257,7 @@ Con PDO los valores se parametrizan para evitar inyección  SQL.
 La conexión a la base de datos, se realiza al momento de instancia la clase por su constructor, este contiene los datos de conexión.
 
 Antes de ejecutar una query, se prepara con el método onPrepare que devuelve un Statement por el cual podremos bandera los parámetros antes de realizar la consulta.
+
 
 ###Cambia la implementación del repositorio de LogSummary que se inyecta en el endpoint GET /, es decir el listado de LogSummary en HTML por la implementación con PDO
 En ApiController y MainController, la instancia de JsonLogSummaryRepository, cambia a MySQLPDORepository, ahora al llamar a /log-summary/{environment} desde el get de nuestra url, realizara la búsqueda desde la base de datos, en caso de no contener información este recalcara el historial de log.
