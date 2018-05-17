@@ -264,6 +264,72 @@ Y para terminar modificamos la importación en nuestra plantilla Twig, tal que a
 
     <link rel="stylesheet" type="text/css" href="{{ asset('build/app.css')}}">
 
+##Sesión 8
+###Modela tu LogSummary en tu dominio
+Para modelar LogSummary en nuestro dominio, primero identificamos todos los métodos usados para hacer el cáculo del resumen de logs, y los inegramos en una nueva clase en el dominio.
+Nuestra clase estará compuesta por variables privadas integer para almacenar el número de veces que se ha producido cada nivel de log. Otra variable privada nos servirá para almazenar los mismos datos en forma de array con clave el nivel de log y valor el número de repeticiones de este.
+Dotamos a la clase con lógica para realizar el filtrado de niveles y devolver un array con el resultado del filtrado.
+
+###Publica un evento log_record.locally_raised cuando se produzca un error desde tu handler de monolog
+Instalamos EventDispatcher `composer require symfony/event-dispatcher` 
+Implementamos la interficie EventDispatcher como LogEventDispatcher, con un método que será llamado cuando se publique el evento pedido.
+Creamos una instancia de EventDispatcher en nuestro MainController, y lanzamos un evento, que previamente habremos suscrito tal que así:
+    
+    private function addDispatcher(): void
+    {
+        $dispatcher      = new EventDispatcher();
+        $logRecordRaised = 'log_record.locally_raised';
+
+        $dispatcher->addListener(
+            $logRecordRaised,
+            function (LogEventDispatcher $event) {
+                $event->locallyRaised();
+            }
+        );
+
+        $dispatcher->dispatch($logRecordRaised, new LogEventDispatcher($logRecordRaised));
+    }
+   
+Vemos como se ejecuta el método del LogEventDispatcher cuando ejecutamos el código.
+
+###Publica un evento log_record.remotely_added cuando se añada un error desde el endpoint público 
+Añadimos un método más a nuestro LogEventDispatcher para que se ejecute cuando el evento de que se ha añadido un log de forma remota sea lanzado.
+Repetimos el mismo proceder que en el anterior MainController, pero esta vez lo hacemos en LogApiController:
+
+    private function addDispatcher(): void
+    {
+        $dispatcher      = new EventDispatcher();
+        $logRecordRaised = 'log_record.remotely_added';
+
+        $dispatcher->addListener(
+            $logRecordRaised,
+            function (LogEventDispatcher $event) {
+                echo $event->remotelyAdded();
+            }
+        );
+
+        $dispatcher->dispatch($logRecordRaised, new LogEventDispatcher($logRecordRaised));
+    }
+
+Y comprobamos que al hacer una llamada POST y insertamos un log se lanza el evento porque se ejecuta el método `remotelyAdded`.
+
+Una vez hechas estas comprobaciones, añadimos tags en el archivo de configuración `services.yaml` para indicar qué método debe de ejecutarse según el evento:
+
+    { name: kernel.event_listener, event: log_record.locally_raised, method: locallyRaised }
+    
+De esta manera podemos inyectar por constructor el EventDispatcher y ahorrarnos múltiples instancias en ambos controladores y añadir los listeners. Por lo que la generación de un evento quedaría así:
+
+    $this->eventDispatcher->dispatch(
+        'log_record.remotely_added',
+        new LogEventDispatcher()
+    );
+    
+    
+###Materializa LogSummary para que cuando lo pidan no lo tengas que calcular
+Creamos una interficie LogSummaryRepository que define dos métodos a implementar, uno para guardar un LogSummary y otra para leer un logSummary persistido en memoria.
+Hacemos una implementación de esta para guardar en formato JSON los logSummary.
+
+
 ##Sesión 9
 ###Implementa un repositorio de LogSummary que persista en MySQL usando PDO (no Doctrine)
 Se crea una clase, en Infrastructure/Repository/ llamada MySQLogSummaryPDORepository.php la cual esta encargada
