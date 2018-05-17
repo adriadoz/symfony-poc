@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace G3\FrameworkPractice\Infrastructure\Endpoint;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\ORM\EntityManager;
 use G3\FrameworkPractice\Application\Log\LogSummaryCalculator;
 use G3\FrameworkPractice\Domain\Log\LogEntry;
 use G3\FrameworkPractice\Domain\Log\LogSummary;
@@ -13,6 +14,7 @@ use G3\FrameworkPractice\Domain\Log\ValueObjects\LogLevelName;
 use G3\FrameworkPractice\Infrastructure\Log\LogEventDispatcher;
 use G3\FrameworkPractice\Infrastructure\Log\LogSummaryGetter;
 use G3\FrameworkPractice\Infrastructure\Repository\MySQLogSummaryDBALRepository;
+use G3\FrameworkPractice\Infrastructure\Repository\MySQLogSummaryORMRepository;
 use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\Plugin\Router\CommandRouter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -28,8 +30,9 @@ final class LogApiController extends Controller
     private $eventDispatcher;
     private $router;
     private $connection;
+    private $entityManager;
 
-    public function __construct(LogRepositoryInterface $repository, Connection $connection)
+    public function __construct(LogRepositoryInterface $repository, Connection $connection, EntityManager $entitymanager)
     {
         $this->repository      = $repository;
         $this->environment     = 'dev';
@@ -37,7 +40,8 @@ final class LogApiController extends Controller
         $this->router          = new CommandRouter();
         $this->router->route('log_record.remotely_added')->to(new LogEventDispatcher($this->environment, $connection));
         $this->router->attachToMessageBus($this->eventDispatcher);
-        $this->connection = $connection;
+        $this->connection    = $connection;
+        $this->entityManager = $entitymanager;
     }
 
     public function read(string $environment, Request $request): Response
@@ -45,7 +49,7 @@ final class LogApiController extends Controller
         $this->environment = $environment;
 
         $levels               = $this->getFilteredLevel($request);
-        $logSummaryRepo       = new MySQLogSummaryDBALRepository($this->connection);
+        $logSummaryRepo       = new MySQLogSummaryORMRepository($this->connection, $this->entityManager);
         $logSummaryCalculator = new LogSummaryCalculator($this->environment, self::PATH);
         $logSummary           = new LogSummaryGetter($environment, $logSummaryRepo, $logSummaryCalculator);
 
