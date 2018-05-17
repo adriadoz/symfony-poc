@@ -9,7 +9,7 @@ use G3\FrameworkPractice\Domain\Log\Repository\LogSummaryRepositoryInterface;
 use PDO;
 use PDOStatement;
 
-final class MySQLogSummaryRepository implements LogSummaryRepositoryInterface
+final class MySQLogSummaryPDORepository implements LogSummaryRepositoryInterface
 {
     private $levels = ['ERROR', 'WARNING', 'INFO', 'CRITICAL', 'DEBUG'];
     private $db_connect;

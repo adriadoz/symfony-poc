@@ -11,7 +11,7 @@ use G3\FrameworkPractice\Domain\Log\Repository\LogRepositoryInterface;
 use G3\FrameworkPractice\Domain\Log\ValueObjects\LogLevelName;
 use G3\FrameworkPractice\Infrastructure\Log\LogEventDispatcher;
 use G3\FrameworkPractice\Infrastructure\Log\LogSummaryGetter;
-use G3\FrameworkPractice\Infrastructure\Repository\MySQLogSummaryRepository;
+use G3\FrameworkPractice\Infrastructure\Repository\MySQLogSummaryPDORepository;
 use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\Plugin\Router\CommandRouter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -42,7 +42,7 @@ final class LogApiController extends Controller
         $this->environment = $environment;
 
         $levels               = $this->getFilteredLevel($request);
-        $logSummaryRepo       = new MySQLogSummaryRepository();
+        $logSummaryRepo       = new MySQLogSummaryPDORepository();
         $logSummaryCalculator = new LogSummaryCalculator($this->environment, self::PATH);
         $logSummary           = new LogSummaryGetter($environment, $logSummaryRepo, $logSummaryCalculator);
 
