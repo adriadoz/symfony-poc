@@ -21,7 +21,6 @@ final class MainController extends Controller
     private $eventDispatcher;
     private $router;
 
-
     public function __construct(
         string $environment,
         string $environmentName,

@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace G3\FrameworkPractice\Infrastructure\Endpoint;
 
+use Doctrine\DBAL\Connection;
 use G3\FrameworkPractice\Application\Log\LogSummaryCalculator;
 use G3\FrameworkPractice\Domain\Log\LogEntry;
 use G3\FrameworkPractice\Domain\Log\LogSummary;
@@ -11,6 +12,7 @@ use G3\FrameworkPractice\Domain\Log\Repository\LogRepositoryInterface;
 use G3\FrameworkPractice\Domain\Log\ValueObjects\LogLevelName;
 use G3\FrameworkPractice\Infrastructure\Log\LogEventDispatcher;
 use G3\FrameworkPractice\Infrastructure\Log\LogSummaryGetter;
+
 use G3\FrameworkPractice\Infrastructure\Repository\MySQLogSummaryPDORepository;
 use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\Plugin\Router\CommandRouter;
@@ -43,6 +45,7 @@ final class LogApiController extends Controller
 
         $levels               = $this->getFilteredLevel($request);
         $logSummaryRepo       = new MySQLogSummaryPDORepository();
+
         $logSummaryCalculator = new LogSummaryCalculator($this->environment, self::PATH);
         $logSummary           = new LogSummaryGetter($environment, $logSummaryRepo, $logSummaryCalculator);
 
