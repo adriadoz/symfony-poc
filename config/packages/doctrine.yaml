@@ -24,5 +24,5 @@ doctrine:
                 is_bundle: false
                 type: annotation
                 dir: '%kernel.project_dir%/src/Infrastructure/Doctrine/Entity'
-                prefix: ' G3\Framework\Practice\Infrastructure\Doctrine\Entity'
+                prefix: 'G3\Framework\Practice\Infrastructure\Doctrine\Entity'
                 alias: G3\Framework\Practice\Entity
